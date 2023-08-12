@@ -2,6 +2,7 @@ use grass_compiler::{
     sass_value::{ArgumentResult, QuoteKind, Value},
     Builtin, Visitor,
 };
+use scoped_tls::scoped_thread_local;
 use std::io;
 use std::{error::Error, sync::Mutex};
 
@@ -28,7 +29,7 @@ impl Context {
         *count
     }
 
-    fn get_unique_hash(&self) -> Result<String, Box<dyn Error>> {
+    fn get_unique_hash(&self) -> Result<String, io::Error> {
         let count = self.get_unique_count();
         let hash_input = format!("{}{}", self.hash_prefix, count);
         generate_hash(&hash_input)
@@ -36,7 +37,7 @@ impl Context {
 }
 
 fn unique(_: ArgumentResult, _: &mut Visitor) -> Result<Value, Box<grass_compiler::Error>> {
-    let hash = CONTEXT.with(|context| context.get_unique_hash().unwrap());
+    let hash = CONTEXT.with(|context| context.get_unique_hash())?;
     Ok(Value::String(hash, QuoteKind::None))
 }
 

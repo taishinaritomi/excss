@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate scoped_tls;
-
 mod compiler;
 mod hash;
 mod visitor;
