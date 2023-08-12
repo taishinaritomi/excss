@@ -116,7 +116,6 @@ mod tests {
     fn error() {
         let code = "color: $red;";
         let error = compile(code, "", "").unwrap_err();
-        println!("{}", error);
         assert_eq!(error.to_string(), "Undefined variable.");
     }
 }
