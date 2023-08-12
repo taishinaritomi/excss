@@ -16,9 +16,9 @@ export default defineConfig({
       },
       inject: `
         $breakpoints: (
-          "_400": "screen and (max-width: 400px)",
-          "_800": "screen and (max-width: 800px)",
-          "_1000": "screen and (max-width: 1000px)",
+          400: "screen and (max-width: 400px)",
+          800: "screen and (max-width: 800px)",
+          1000: "screen and (max-width: 1000px)",
         ) !default;
 
         @mixin mq($breakpoint) {

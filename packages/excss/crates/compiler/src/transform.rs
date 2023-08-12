@@ -10,14 +10,12 @@ use super::{
 
 const IMPORT_SOURCE: &str = "excss";
 const IMPORT_CSS_IDENT: &str = "css";
-const IMPORT_FILE_HASH_IDENT: &str = "fileHash";
-const CSS_FILE_HASH_VARIANT: &str = "file-hash";
-const CSS_BLOCK_HASH_VARIANT: &str = "block-hash";
+const IMPORT_FILE_ID_IDENT: &str = "FILE_ID";
+const CSS_FILE_ID_VARIANT: &str = "FILE_ID";
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     pub filename: String,
-    #[serde(alias = "inject")]
     pub inject: Option<String>,
     pub variants: Option<compile_css_variants::Variants>,
 }
@@ -30,59 +28,67 @@ pub struct Output {
 }
 
 pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
-    let mut css = String::new();
+    match generate_hash(&config.filename) {
+        Ok(file_id) => {
+            let mut css = String::new();
 
-    let file_hash = &match generate_hash(&config.filename) {
-        Ok(hash) => hash,
-        Err(_) => "".to_string(),
-    };
+            let inject_variants = match config.variants {
+                Some(mut variants) => {
+                    variants.insert(
+                        CSS_FILE_ID_VARIANT.to_string(),
+                        compile_css_variants::VariantValue::Str(file_id.clone()),
+                    );
+                    compile_css_variants::compile(&variants)
+                }
+                None => String::new(),
+            };
 
-    let inject_variants = match config.variants {
-        Some(variants) => compile_css_variants::compile(&variants),
-        None => "".to_string(),
-    };
+            let inject_css = format!(
+                "{}\n{}",
+                inject_variants,
+                config.inject.unwrap_or(String::new())
+            );
 
-    let input_inject = config.inject.unwrap_or("".to_string());
+            let import_source = &IMPORT_SOURCE.to_string();
+            let import_css_ident = &IMPORT_CSS_IDENT.to_string();
+            let import_file_id_ident = &IMPORT_FILE_ID_IDENT.to_string();
 
-    let inject_css = format!("{}\n{}", inject_variants, input_inject);
+            let compile_input = compile_js::Input {
+                code,
+                filename: &config.filename,
+            };
 
-    let import_source = &IMPORT_SOURCE.to_string();
-    let import_css_ident = &IMPORT_CSS_IDENT.to_string();
-    let import_file_hash_ident = &IMPORT_FILE_HASH_IDENT.to_string();
-    let css_file_hash_variant = &CSS_FILE_HASH_VARIANT.to_string();
-    let css_block_hash_variant = &CSS_BLOCK_HASH_VARIANT.to_string();
+            let result = compile_js::compile(compile_input, |(module, _)| {
+                let mut module = module;
 
-    let compile_input = compile_js::Input {
-        code,
-        filename: &config.filename,
-    };
+                let mut transform_visitor = TransformVisitor::new(
+                    import_source,
+                    import_css_ident,
+                    import_file_id_ident,
+                    &file_id,
+                    &inject_css,
+                );
 
-    let result = compile_js::compile(compile_input, |(module, _)| {
-        let mut module = module;
+                module.visit_mut_with(&mut transform_visitor);
 
-        let mut transform_visitor = TransformVisitor::new(
-            import_source,
-            import_css_ident,
-            import_file_hash_ident,
-            css_file_hash_variant,
-            css_block_hash_variant,
-            file_hash,
-            &inject_css,
-        );
+                css = transform_visitor.get_css();
 
-        module.visit_mut_with(&mut transform_visitor);
+                module
+            });
 
-        css = transform_visitor.get_css();
-
-        module
-    });
-
-    match result {
-        Ok(result) => Ok(Output {
-            code: result.code,
-            map: result.map,
-            css,
+            match result {
+                Ok(result) => Ok(Output {
+                    code: result.code,
+                    map: result.map,
+                    css,
+                }),
+                Err(err) => Err(error::Error { errors: err.errors }),
+            }
+        }
+        Err(err) => Err(error::Error {
+            errors: vec![error::Diagnostic {
+                message: err.to_string(),
+            }],
         }),
-        Err(err) => Err(error::Error { errors: err.errors }),
     }
 }

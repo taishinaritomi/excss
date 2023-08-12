@@ -1,8 +1,8 @@
-import type { Picker } from "excss";
-import { css, picker } from "excss";
+import type { Ex } from "excss";
+import { css, ex } from "excss";
 import { useReducer } from "react";
 
-const style = picker({
+const style = ex({
   base: css`
     padding: 2rem;
     border-radius: 0.5rem;
@@ -36,7 +36,7 @@ const style = picker({
   },
 });
 
-type Props = Picker<typeof style>;
+type Props = Ex<typeof style>;
 
 export function Button(props: Props) {
   const [isDisabled, toggle] = useReducer((v) => !v, false);

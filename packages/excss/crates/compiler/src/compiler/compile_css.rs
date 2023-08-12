@@ -1,7 +1,44 @@
-use std::error::Error;
+use grass_compiler::{
+    sass_value::{ArgumentResult, QuoteKind, Value},
+    Builtin, Visitor,
+};
 use std::io;
+use std::{error::Error, sync::Mutex};
 
 use crate::hash::generate_hash;
+
+scoped_thread_local!(static CONTEXT: Context);
+
+struct Context {
+    count: Mutex<usize>,
+    hash_prefix: String,
+}
+
+impl Context {
+    fn new(hash_prefix: String) -> Self {
+        Self {
+            count: Mutex::new(0),
+            hash_prefix,
+        }
+    }
+
+    fn get_unique_count(&self) -> usize {
+        let mut count = self.count.lock().unwrap();
+        *count += 1;
+        *count
+    }
+
+    fn get_unique_hash(&self) -> Result<String, Box<dyn Error>> {
+        let count = self.get_unique_count();
+        let hash_input = format!("{}{}", self.hash_prefix, count);
+        generate_hash(&hash_input)
+    }
+}
+
+fn unique(_: ArgumentResult, _: &mut Visitor) -> Result<Value, Box<grass_compiler::Error>> {
+    let hash = CONTEXT.with(|context| context.get_unique_hash().unwrap());
+    Ok(Value::String(hash, QuoteKind::None))
+}
 
 const CLASS_NAME_HASH: &str = "__EX_CSS_CLASS_NAME_HASH__";
 
@@ -11,14 +48,25 @@ pub struct Output {
     pub class_name: String,
 }
 
-pub fn compile<T: Into<String>>(input: T, inject: T) -> Result<Output, Box<dyn Error>> {
+pub fn compile<T: Into<String>>(
+    input: T,
+    inject: T,
+    hash_prefix: T,
+) -> Result<Output, Box<dyn Error>> {
     let input = input.into();
     let inject = inject.into();
+    let hash_prefix = hash_prefix.into();
 
-    let result = grass::from_string(
-        format!("{}.{}{{{}}}", &inject, CLASS_NAME_HASH, &input),
-        &grass::Options::default().input_syntax(grass::InputSyntax::Scss),
-    );
+    let result = CONTEXT.set(&Context::new(hash_prefix), || {
+        let option = grass::Options::default()
+            .input_syntax(grass::InputSyntax::Scss)
+            .add_custom_fn("unique", Builtin::new(unique));
+
+        grass::from_string(
+            format!("{}\n.{} {{\n{}\n}}", &inject, CLASS_NAME_HASH, &input),
+            &option,
+        )
+    });
 
     match result {
         Ok(css) => {
@@ -34,6 +82,7 @@ pub fn compile<T: Into<String>>(input: T, inject: T) -> Result<Output, Box<dyn E
 }
 
 fn handle_error(err: grass::Error) -> io::Error {
+    // io::Error::new(io::ErrorKind::Other, err.to_string())
     match err.kind() {
         grass::ErrorKind::ParseError {
             message,
@@ -53,7 +102,7 @@ mod tests {
     #[test]
     fn base() {
         let code = "color: red;";
-        let output = compile(code, "").unwrap();
+        let output = compile(code, "", "").unwrap();
         assert_eq!(
             output,
             Output {
@@ -66,7 +115,8 @@ mod tests {
     #[test]
     fn error() {
         let code = "color: $red;";
-        let error = compile(code, "").unwrap_err();
+        let error = compile(code, "", "").unwrap_err();
+        println!("{}", error);
         assert_eq!(error.to_string(), "Undefined variable.");
     }
 }
