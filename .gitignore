@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+.next
+.inspect
+dist
+target
+binding
+.turbo
+.swc
+tsconfig.tsbuildinfo

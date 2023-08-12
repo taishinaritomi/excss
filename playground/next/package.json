@@ -1,0 +1,24 @@
+{
+  "name": "@excss/playground-next",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "check": "run-p check:*",
+    "check:type": "tsc --noEmit",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "analyze": "ANALYZE=true next build"
+  },
+  "dependencies": {
+    "excss": "workspace:^",
+    "next": "^13.4.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@next/bundle-analyzer": "^13.4.10"
+  }
+}

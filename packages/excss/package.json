@@ -1,0 +1,105 @@
+{
+  "name": "excss",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Taishi Naritomi",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taishinaritomi/excss.git",
+    "directory": "packages/excss"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "dist/_types/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/_types/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./vite": {
+      "types": "./dist/_types/plugins/vite.d.ts",
+      "import": "./dist/plugins/vite.mjs",
+      "require": "./dist/plugins/vite.cjs"
+    },
+    "./webpack": {
+      "types": "./dist/_types/plugins/webpack/plugin.d.ts",
+      "import": "./dist/plugins/webpack/plugin.mjs",
+      "require": "./dist/plugins/webpack/plugin.cjs"
+    },
+    "./webpack/loader": {
+      "types": "./dist/_types/plugins/webpack/loader.d.ts",
+      "import": "./dist/plugins/webpack/loader.mjs",
+      "require": "./dist/plugins/webpack/loader.cjs"
+    },
+    "./webpack/virtualLoader": {
+      "types": "./dist/_types/plugins/webpack/virtualLoader.d.ts",
+      "import": "./dist/plugins/webpack/virtualLoader.mjs",
+      "require": "./dist/plugins/webpack/virtualLoader.cjs"
+    },
+    "./next": {
+      "types": "./dist/_types/plugins/next.d.ts",
+      "import": "./dist/plugins/next.mjs",
+      "require": "./dist/plugins/next.cjs"
+    },
+    "./assets/ex.css": "./assets/ex.css"
+  },
+  "typesVersions": {
+    "*": {
+      "vite": [
+        "./dist/_types/plugins/vite"
+      ],
+      "webpack": [
+        "./dist/_types/plugins/webpack/plugin"
+      ],
+      "webpack/loader": [
+        "./dist/_types/plugins/webpack/loader"
+      ],
+      "webpack/virtualLoader": [
+        "./dist/_types/plugins/webpack/virtualLoader"
+      ],
+      "next": [
+        "./dist/_types/plugins/next"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "check": "run-p check:*",
+    "check:type": "tsc --noEmit",
+    "check:publint": "publint --strict",
+    "test": "run-p test:*",
+    "test:vitest": "vitest run",
+    "test:vitest-type": "vitest typecheck --run",
+    "build": "tsx ./scripts/build.ts"
+  },
+  "devDependencies": {
+    "next": "^13.4.10",
+    "@swc/wasm": "^1.3.72",
+    "prettier": "^3.0.0",
+    "vite": "^4.4.4",
+    "webpack": "^5.88.1"
+  },
+  "peerDependencies": {
+    "next": "^13",
+    "vite": "^4",
+    "webpack": "^5"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+name: "setup-rust"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+    - run: rustup override set 1.70.0
+      shell: bash
+    - run: rustup component add rustfmt clippy
+      shell: bash
+    - run: rustup target add wasm32-unknown-unknown
+      shell: bash

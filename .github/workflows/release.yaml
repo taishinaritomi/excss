@@ -1,0 +1,24 @@
+name: release
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-rust
+      - run: pnpm run build
+      - run: pnpm run check
+      - run: pnpm run test
+      - uses: changesets/action@v1
+        with:
+          publish: pnpm changeset publish
+          commit: "publish packages"
+          title: "chore(changesets): 🦋 publish packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
