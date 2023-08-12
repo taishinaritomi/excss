@@ -1,10 +1,10 @@
 import { describe, it, expect, expectTypeOf } from "vitest";
-import type { Picker } from "./picker";
-import { picker } from "./picker";
+import type { Ex } from "./ex";
+import { ex } from "./ex";
 
-describe("picker", () => {
+describe("ex", () => {
   it("basic", () => {
-    const style = picker({
+    const style = ex({
       base: "base",
       default: { boolean: true },
       string: {
@@ -30,6 +30,6 @@ describe("picker", () => {
     };
 
     expectTypeOf(style).toEqualTypeOf<(props: Style) => string>();
-    expectTypeOf<Picker<typeof style>>().toEqualTypeOf<Style>();
+    expectTypeOf<Ex<typeof style>>().toEqualTypeOf<Style>();
   });
 });

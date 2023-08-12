@@ -332,8 +332,10 @@ version = "0.0.0"
 dependencies = [
  "getrandom",
  "grass",
+ "grass_compiler",
  "itertools",
  "murmur3",
+ "scoped-tls",
  "serde",
  "serde_json",
  "swc_core",

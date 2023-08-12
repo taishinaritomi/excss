@@ -1,7 +1,7 @@
 import type { If, Pretty, StringToLiteral } from "./utils/types";
 
-export { picker };
-export type { Picker };
+export { ex };
+export type { Ex };
 
 type ClassName = string | string[];
 
@@ -16,78 +16,78 @@ type IsClassName<T> = [T] extends [ClassName] ? true : false;
 type IsBase<T> = [T] extends [BASE] ? true : false;
 type IsDefault<T> = [T] extends [DEFAULT] ? true : false;
 
-type PickerSelector<T> = Pretty<{
+type ExSelector<T> = Pretty<{
   [K in keyof T]: If<IsClassName<T[K]>, T[K], never>;
 }>;
 
-type PickerInput<T> = Pretty<{
+type ExInput<T> = Pretty<{
   [BASE]?: ClassName;
-  [DEFAULT]?: PickerProps<T>;
+  [DEFAULT]?: ExProps<T>;
 }> & {
   [K in keyof T]?: If<
     IsBase<K>,
     ClassName,
-    If<IsDefault<K>, PickerProps<T>, PickerSelector<T[K]>>
+    If<IsDefault<K>, ExProps<T>, ExSelector<T[K]>>
   >;
 };
 
-type PickerProps<T> = Pretty<{
+type ExProps<T> = Pretty<{
   [K in Exclude<keyof T, BASE | DEFAULT>]?: KeyToLiteral<T[K]>;
 }>;
 
 type Key = string | number;
 
-type ResolvedPickerSelector = Record<Key, string>;
+type ResolvedExSelector = Record<Key, string>;
 
-type ResolvedPickerSelectorMeta = {
+type ResolvedExSelectorMeta = {
   /** @internal */
   _default: string | undefined;
   /** @internal */
-  _selector: ResolvedPickerSelector;
+  _selector: ResolvedExSelector;
 };
 
-type ResolvedPickerSelectors = Record<Key, ResolvedPickerSelectorMeta>;
+type ResolvedExSelectors = Record<Key, ResolvedExSelectorMeta>;
 
-type ResolvedPicker = {
+type ResolvedEx = {
   /** @internal */
   _base: string | undefined;
   /** @internal */
-  _selectors: ResolvedPickerSelectors;
+  _selectors: ResolvedExSelectors;
 };
 
-type RawPickerDefault = Record<Key, string | number>;
+type RawExDefault = Record<Key, string | number>;
 
-type RawPickerInput = Partial<
+type RawExInput = Partial<
   Record<BASE, ClassName> &
-    Record<DEFAULT, RawPickerDefault> &
-    Record<Key, RawPickerSelector>
+    Record<DEFAULT, RawExDefault> &
+    Record<Key, RawExSelector>
 >;
 
-type RawPickerSelector = Record<Key, ClassName>;
-type RawPickerProps = Record<Key, string | number | boolean | undefined>;
+type RawExSelector = Record<Key, ClassName>;
+type RawExProps = Record<Key, string | number | boolean | undefined>;
 
-function resolveClassName(className: ClassName): string {
+function join(className: ClassName): string {
   return Array.isArray(className) ? className.join(" ") : className;
 }
 
-function resolvePicker(picker: RawPickerInput): ResolvedPicker {
-  const pickerDefault = picker[DEFAULT] ?? {};
+function resolveEx(ex: RawExInput): ResolvedEx {
+  const exDefault = ex[DEFAULT] ?? {};
 
-  const resoledBase = picker[BASE] && resolveClassName(picker[BASE]);
-  const resoledSelectors: ResolvedPickerSelectors = {};
+  const resoledBase = ex[BASE] && join(ex[BASE]);
+  const resoledSelectors: ResolvedExSelectors = {};
 
-  for (const pickerKey in picker) {
-    if (pickerKey !== BASE) {
-      const selector = picker[pickerKey];
+  for (const exKey in ex) {
+    if (exKey !== BASE) {
+      const selector = ex[exKey];
 
-      const resoledSelector: ResolvedPickerSelector = {};
-      const defaultKey = pickerDefault[`${pickerKey}`];
+      const resoledSelector: ResolvedExSelector = {};
+      const defaultKey = exDefault[`${exKey}`];
       let defaultClassName: string | undefined;
 
       for (const selectorKey in selector) {
         let className = selector[selectorKey];
         if (className) {
-          className = resolveClassName(className);
+          className = join(className);
           resoledSelector[selectorKey] = className;
           if (defaultKey && `${defaultKey}` === selectorKey) {
             defaultClassName = className;
@@ -95,7 +95,7 @@ function resolvePicker(picker: RawPickerInput): ResolvedPicker {
         }
       }
 
-      resoledSelectors[pickerKey] = {
+      resoledSelectors[exKey] = {
         _default: defaultClassName,
         _selector: resoledSelector,
       };
@@ -104,7 +104,7 @@ function resolvePicker(picker: RawPickerInput): ResolvedPicker {
   return { _base: resoledBase, _selectors: resoledSelectors };
 }
 
-function pickerCallback(this: ResolvedPicker, props: RawPickerProps): string {
+function exCallback(this: ResolvedEx, props: RawExProps): string {
   let classNames = "";
 
   if (this._base) classNames = this._base;
@@ -126,13 +126,11 @@ function pickerCallback(this: ResolvedPicker, props: RawPickerProps): string {
   return classNames;
 }
 
-type Picker<T extends (props: RawPickerProps) => string> = Pretty<
-  Parameters<T>[0]
->;
+type Ex<T extends (props: RawExProps) => string> = Pretty<Parameters<T>[0]>;
 
-function picker<T>(picker: PickerInput<T>) {
-  const resolvedPicker = resolvePicker(picker as RawPickerInput);
-  return pickerCallback.bind(resolvedPicker) as (
-    props: PickerProps<T>,
-  ) => string;
+function ex<T>(ex: ExInput<T>) {
+  const resolvedEx = resolveEx(ex as RawExInput);
+  return exCallback.bind(resolvedEx) as (props: ExProps<T>) => string;
 }
+
+ex.join = join;

@@ -3,26 +3,26 @@ use swc_core::ecma::visit::{VisitMut, VisitMutWith};
 
 pub struct SearchImportVisitor<'a> {
     pub target_css_ident_ids: Vec<ast::Id>,
-    pub target_file_hash_ident_ids: Vec<ast::Id>,
+    pub target_file_id_ident_ids: Vec<ast::Id>,
     pub target_namespace_ids: Vec<ast::Id>,
     import_source: &'a String,
     import_css_ident: &'a String,
-    import_file_hash_ident: &'a String,
+    import_file_id_ident: &'a String,
 }
 
 impl<'a> SearchImportVisitor<'a> {
     pub fn new(
         import_source: &'a String,
         import_css_ident: &'a String,
-        import_file_hash_ident: &'a String,
+        import_file_id_ident: &'a String,
     ) -> Self {
         Self {
             target_css_ident_ids: vec![],
-            target_file_hash_ident_ids: vec![],
+            target_file_id_ident_ids: vec![],
             target_namespace_ids: vec![],
             import_source,
             import_css_ident,
-            import_file_hash_ident,
+            import_file_id_ident,
         }
     }
 }
@@ -56,8 +56,8 @@ impl VisitMut for SearchImportVisitor<'_> {
 
                             if *self.import_css_ident == ident_sym {
                                 self.target_css_ident_ids.push(import_named.local.to_id());
-                            } else if *self.import_file_hash_ident == ident_sym {
-                                self.target_file_hash_ident_ids
+                            } else if *self.import_file_id_ident == ident_sym {
+                                self.target_file_id_ident_ids
                                     .push(import_named.local.to_id());
                             }
                         }

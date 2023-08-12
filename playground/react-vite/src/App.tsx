@@ -1,4 +1,4 @@
-import { css, fileHash } from "excss";
+import { css, FILE_ID } from "excss";
 import { useState } from "react";
 import { Button } from "./Button";
 
@@ -10,7 +10,7 @@ export function App() {
         padding: 10rem;
         background-color: $red;
         border-radius: 0.5rem;
-        @include mq(_400) {
+        @include mq(400) {
           background-color: black;
         }
       `}
@@ -25,10 +25,10 @@ export function App() {
 
       <p
         style={{
-          [`--${fileHash}-count`]: `${count}deg`,
+          [`--${FILE_ID}-count`]: `${count}deg`,
         }}
         className={css`
-          $animation-spin: #{$block-hash};
+          $animation-spin: unique();
           animation: 1s $animation-spin;
           @keyframes #{$animation-spin} {
             from {
@@ -38,8 +38,8 @@ export function App() {
               transform: rotate(360deg);
             }
           }
-          $count: --#{$file-hash}-count;
-          transform: rotate(var($count));
+
+          transform: rotate(var(--#{$FILE_ID}-count));
         `}
       >
         rotate

@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use itertools::Itertools;
 use swc_core::{
@@ -10,23 +10,19 @@ use swc_core::{
 };
 
 use crate::{
-    compiler::{compile_css, compile_css_variants},
-    hash::generate_hash,
-    visitor::search_import_visitor::SearchImportVisitor,
+    compiler::compile_css, hash::generate_hash, visitor::search_import_visitor::SearchImportVisitor,
 };
 
 pub struct TransformVisitor<'a> {
     target_css_ident_ids: Vec<ast::Id>,
-    target_file_hash_ident_ids: Vec<ast::Id>,
+    target_file_id_ident_ids: Vec<ast::Id>,
     target_namespace_ids: Vec<ast::Id>,
     import_source: &'a String,
     import_css_ident: &'a String,
-    import_file_hash_ident: &'a String,
-    css_file_hash_variant: &'a String,
-    css_block_hash_variant: &'a String,
+    import_file_id_ident: &'a String,
     css_list: HashSet<String>,
     inject_css: &'a String,
-    file_hash: &'a String,
+    file_id: &'a String,
     hash_count: usize,
 }
 
@@ -34,22 +30,18 @@ impl<'a> TransformVisitor<'a> {
     pub fn new(
         import_source: &'a String,
         import_css_ident: &'a String,
-        import_file_hash_ident: &'a String,
-        css_file_hash_variant: &'a String,
-        css_block_hash_variant: &'a String,
-        file_hash: &'a String,
+        import_file_id_ident: &'a String,
+        file_id: &'a String,
         inject_css: &'a String,
     ) -> Self {
         TransformVisitor {
             import_source,
             import_css_ident,
-            import_file_hash_ident,
-            css_file_hash_variant,
-            css_block_hash_variant,
-            file_hash,
+            import_file_id_ident,
+            file_id,
             inject_css,
             target_css_ident_ids: vec![],
-            target_file_hash_ident_ids: vec![],
+            target_file_id_ident_ids: vec![],
             target_namespace_ids: vec![],
             css_list: HashSet::new(),
             hash_count: 0,
@@ -65,12 +57,12 @@ impl VisitMut for TransformVisitor<'_> {
     fn visit_mut_expr(&mut self, expr: &mut ast::Expr) {
         match expr {
             ast::Expr::Ident(ident) => {
-                for target_id in self.target_file_hash_ident_ids.iter() {
+                for target_id in self.target_file_id_ident_ids.iter() {
                     if ident.to_id() == *target_id {
                         *expr = ast::Expr::Lit(ast::Lit::Str(ast::Str {
                             raw: None,
                             span: ident.span,
-                            value: self.file_hash.clone().into(),
+                            value: self.file_id.clone().into(),
                         }));
                         break;
                     }
@@ -82,11 +74,11 @@ impl VisitMut for TransformVisitor<'_> {
                         if ident.to_id() == *target_namespace_id {
                             if let ast::MemberProp::Ident(ident) = &member.prop {
                                 let ident_sym = ident.sym.to_string();
-                                if *self.import_file_hash_ident == ident_sym {
+                                if *self.import_file_id_ident == ident_sym {
                                     *expr = ast::Expr::Lit(ast::Lit::Str(ast::Str {
                                         raw: None,
                                         span: member.span,
-                                        value: self.file_hash.clone().into(),
+                                        value: self.file_id.clone().into(),
                                     }));
                                     break;
                                 }
@@ -137,7 +129,7 @@ impl VisitMut for TransformVisitor<'_> {
                     let mut class_name = "".to_string();
 
                     if !css.is_empty() {
-                        let hash_input = format!("{}{}", &self.file_hash, &self.hash_count);
+                        let hash_input = format!("{}{}", &self.file_id, &self.hash_count);
 
                         let css_hash = generate_hash(&hash_input)
                             .map_err(|err| {
@@ -148,24 +140,7 @@ impl VisitMut for TransformVisitor<'_> {
                         if let Some(css_hash) = css_hash {
                             self.hash_count += 1;
 
-                            let mut hash_variants: compile_css_variants::Variants = BTreeMap::new();
-
-                            hash_variants.insert(
-                                self.css_file_hash_variant.to_string(),
-                                compile_css_variants::VariantValue::Str(self.file_hash.clone()),
-                            );
-                            hash_variants.insert(
-                                self.css_block_hash_variant.to_string(),
-                                compile_css_variants::VariantValue::Str(css_hash),
-                            );
-
-                            let inject = format!(
-                                "{}{}",
-                                &compile_css_variants::compile(&hash_variants),
-                                &self.inject_css
-                            );
-
-                            match compile_css::compile(css, inject) {
+                            match compile_css::compile(css, self.inject_css.clone(), css_hash) {
                                 Ok(output) => {
                                     class_name = output.class_name;
                                     self.css_list.insert(output.css);
@@ -193,13 +168,13 @@ impl VisitMut for TransformVisitor<'_> {
         let mut search_import_visitor = SearchImportVisitor::new(
             self.import_source,
             self.import_css_ident,
-            self.import_file_hash_ident,
+            self.import_file_id_ident,
         );
 
         module.visit_mut_with(&mut search_import_visitor);
 
         self.target_css_ident_ids = search_import_visitor.target_css_ident_ids;
-        self.target_file_hash_ident_ids = search_import_visitor.target_file_hash_ident_ids;
+        self.target_file_id_ident_ids = search_import_visitor.target_file_id_ident_ids;
         self.target_namespace_ids = search_import_visitor.target_namespace_ids;
 
         module.visit_mut_children_with(self);

@@ -5,10 +5,12 @@ edition = "2021"
 
 [dependencies]
 itertools = { workspace = true }
+scoped-tls = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 getrandom = { workspace = true, features = ["js"] }
 grass = { workspace = true }
+grass_compiler = { workspace = true }
 swc_core = { workspace = true, features = [
   "ecma_transforms_typescript",
   "ecma_transforms_react",
