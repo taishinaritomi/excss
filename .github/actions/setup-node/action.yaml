@@ -3,11 +3,11 @@ runs:
   using: "composite"
   steps:
     - uses: pnpm/action-setup@v2
+      with:
+        version: "8.x"
     - uses: actions/setup-node@v3
       with:
         node-version: "18.x"
         cache: pnpm
-      with:
-        version: "8.x"
     - run: pnpm install
       shell: bash
