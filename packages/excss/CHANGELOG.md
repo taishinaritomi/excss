@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.7
+
+### Patch Changes
+
+- [#14](https://github.com/taishinaritomi/excss/pull/14) [`2ef4ca7`](https://github.com/taishinaritomi/excss/commit/2ef4ca7c55265cc301f234eca815fe9d2fb64a7d) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - fix: fixed the issue where FILE_ID cannot be used without variants options
+
 ## 0.0.6
 
 ### Patch Changes
