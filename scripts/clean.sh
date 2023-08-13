@@ -1,3 +1,3 @@
 set -e
 
-pnpm rimraf ./node_modules target ./{packages,playground}/*/{node_modules,dist,.next,.turbo,target,binding}
+pnpm rimraf ./node_modules target target_check ./{packages,playground}/*/{node_modules,dist,.next,.turbo,binding}
