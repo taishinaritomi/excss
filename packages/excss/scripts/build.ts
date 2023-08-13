@@ -78,7 +78,7 @@ async function js() {
 }
 
 async function dts() {
-  const typesOutDir = path.join("dist", "_types");
+  const typesOutDir = path.join("dist/_types");
   fs.mkdirSync(typesOutDir, { recursive: true });
   fs.writeFileSync(
     path.join(typesOutDir, "package.json"),
@@ -100,9 +100,15 @@ async function wasm() {
     [
       "wasm-pack build",
       "--target=nodejs",
+      "--no-pack",
       "--out-dir=../../binding/compiler_wasm",
       "./crates/compiler_wasm",
     ].join(" "),
+  );
+
+  fs.writeFileSync(
+    path.join("binding/package.json"),
+    JSON.stringify({ type: "commonjs" }),
   );
 }
 
