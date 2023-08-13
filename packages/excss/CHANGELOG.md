@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.4
+
+### Patch Changes
+
+- [#8](https://github.com/taishinaritomi/excss/pull/8) [`8ec4538`](https://github.com/taishinaritomi/excss/commit/8ec4538946971b720d4a5f9eaa15b8fff1756fb9) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - fix: fix build script
+
 ## 0.0.3
 
 ### Patch Changes
