@@ -68,6 +68,7 @@
   },
   "files": [
     "dist",
+    "binding",
     "LICENSE"
   ],
   "scripts": {
@@ -81,7 +82,6 @@
   },
   "devDependencies": {
     "next": "^13.4.10",
-    "@swc/wasm": "^1.3.72",
     "prettier": "^3.0.0",
     "vite": "^4.4.4",
     "webpack": "^5.88.1"
