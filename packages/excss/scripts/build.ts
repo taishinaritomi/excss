@@ -57,13 +57,14 @@ async function js() {
               setup: (build) => {
                 build.onResolve({ filter: /dist\/_wasm/ }, (args) => {
                   if (args.importer) {
-                    const resolvedPath = path.join(args.resolveDir, args.path);
-                    const originalPath = `${resolvedPath}.js`;
+                    const resolvedPath = path.relative(
+                      path.join(process.cwd(), entryPoint),
+                      path.join(args.resolveDir, `${args.path}.js`),
+                    );
+
                     return {
                       external: true,
-                      path: fs.existsSync(originalPath)
-                        ? originalPath
-                        : resolvedPath,
+                      path: resolvedPath.replace("../", ""),
                     };
                   }
                 });
