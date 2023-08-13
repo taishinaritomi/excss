@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use swc_core::ecma::visit::VisitMutWith;
 
 use super::{
@@ -32,20 +33,16 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
         Ok(file_id) => {
             let mut css = String::new();
 
-            let inject_variants = match config.variants {
-                Some(mut variants) => {
-                    variants.insert(
-                        CSS_FILE_ID_VARIANT.to_string(),
-                        compile_css_variants::VariantValue::Str(file_id.clone()),
-                    );
-                    compile_css_variants::compile(&variants)
-                }
-                None => String::new(),
-            };
+            let mut variants = config.variants.unwrap_or(BTreeMap::new());
+
+            variants.insert(
+                CSS_FILE_ID_VARIANT.to_string(),
+                compile_css_variants::VariantValue::Str(file_id.clone()),
+            );
 
             let inject_css = format!(
                 "{}\n{}",
-                inject_variants,
+                compile_css_variants::compile(&variants),
                 config.inject.unwrap_or(String::new())
             );
 
