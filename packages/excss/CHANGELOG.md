@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.6
+
+### Patch Changes
+
+- [#12](https://github.com/taishinaritomi/excss/pull/12) [`aeefa33`](https://github.com/taishinaritomi/excss/commit/aeefa3347431bcda9635dc2086e22def92f62d27) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - fix: fix build script
+
 ## 0.0.5
 
 ### Patch Changes
