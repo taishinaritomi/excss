@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.5
+
+### Patch Changes
+
+- [#10](https://github.com/taishinaritomi/excss/pull/10) [`b66d7ab`](https://github.com/taishinaritomi/excss/commit/b66d7abd491d5d876a7d1294309d726cb7e32e77) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - fix: change the out dir for wasm
+
 ## 0.0.4
 
 ### Patch Changes
