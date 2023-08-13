@@ -11,6 +11,7 @@ runs:
           ~/.cargo/registry
           ~/.cargo/git
           target
+          target_check
         key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
     - run: rustup override set 1.70.0
       shell: bash

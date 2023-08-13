@@ -14,7 +14,7 @@
     "test": "run-p test:*",
     "test:packages": "turbo run test --parallel",
     "test:cargo": "cargo test -- --nocapture",
-    "check": "RUSTFLAGS=\"-D warnings\" run-p check:*",
+    "check": "CARGO_TARGET_DIR=target_check RUSTFLAGS=\"-D warnings\" run-p check:*",
     "check:packages": "turbo run check --parallel",
     "check:eslint": "eslint . --ignore-path .check-ignore --max-warnings 0",
     "check:prettier": "prettier . --check --ignore-path .check-ignore",

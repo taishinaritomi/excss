@@ -4,6 +4,7 @@ node_modules
 .inspect
 dist
 target
+target_check
 binding
 .turbo
 .swc
