@@ -2,6 +2,7 @@ import childProcess from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import * as esBuild from "esbuild";
+import { rimraf } from "rimraf";
 
 function cmd(command: string) {
   const spawn = childProcess.spawn(command, { shell: true });
@@ -52,9 +53,9 @@ async function js() {
           },
           plugins: [
             {
-              name: "binding-external",
+              name: "wasm-external",
               setup: (build) => {
-                build.onResolve({ filter: /binding/ }, (args) => {
+                build.onResolve({ filter: /dist\/_wasm/ }, (args) => {
                   if (args.importer) {
                     const resolvedPath = path.join(args.resolveDir, args.path);
                     const originalPath = `${resolvedPath}.js`;
@@ -96,20 +97,25 @@ async function dts() {
 }
 
 async function wasm() {
+  const wasmOutDir = path.join("dist/_wasm");
+  fs.mkdirSync(wasmOutDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(wasmOutDir, "package.json"),
+    JSON.stringify({ type: "commonjs" }),
+  );
+
   await cmd(
     [
       "wasm-pack build",
       "--target=nodejs",
       "--no-pack",
-      "--out-dir=../../binding/compiler_wasm",
+      `--out-dir=../../${wasmOutDir}/compiler`,
       "./crates/compiler_wasm",
     ].join(" "),
   );
 
-  fs.writeFileSync(
-    path.join("binding/package.json"),
-    JSON.stringify({ type: "commonjs" }),
-  );
+  // TODO https://github.com/rustwasm/wasm-pack/pull/1131
+  await rimraf(`${wasmOutDir}/**/.gitignore`, { glob: true });
 }
 
 async function main() {

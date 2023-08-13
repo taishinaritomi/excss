@@ -5,7 +5,6 @@ node_modules
 dist
 target
 target_check
-binding
 .turbo
 .swc
 tsconfig.tsbuildinfo

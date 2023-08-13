@@ -68,7 +68,6 @@
   },
   "files": [
     "dist",
-    "binding",
     "LICENSE"
   ],
   "scripts": {
