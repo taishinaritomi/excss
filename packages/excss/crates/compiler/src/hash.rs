@@ -1,9 +1,8 @@
 use murmur3::murmur3_32;
-use std::error::Error;
-use std::io::Cursor;
+use std::io;
 
-pub fn generate_hash<T: AsRef<[u8]>>(value: &T) -> Result<String, Box<dyn Error>> {
-    let hash = murmur3_32(&mut Cursor::new(value), 0)?;
+pub fn generate_hash<T: AsRef<[u8]>>(value: &T) -> Result<String, io::Error> {
+    let hash = murmur3_32(&mut io::Cursor::new(value), 0)?;
     Ok(if hash == 0 {
         "".to_string()
     } else {
