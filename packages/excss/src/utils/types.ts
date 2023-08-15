@@ -1,7 +1,6 @@
 type Literal = string | number | bigint | boolean | null | undefined;
 
-export type StringToLiteral<T, L extends Literal> = T extends `${infer R extends
-  L}`
+export type ToLiteral<T, L extends Literal> = T extends `${infer R extends L}`
   ? R
   : T;
 

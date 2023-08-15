@@ -1,136 +1,99 @@
-import type { If, Pretty, StringToLiteral } from "./utils/types";
+import type { Pretty, ToLiteral } from "./utils/types";
 
 export { ex };
 export type { Ex };
 
-type ClassName = string | string[];
-
-const BASE = "base";
 const DEFAULT = "default";
-type BASE = typeof BASE;
-type DEFAULT = typeof DEFAULT;
 
-type KeyToLiteral<T> = StringToLiteral<keyof T, boolean | number>;
-
-type IsClassName<T> = [T] extends [ClassName] ? true : false;
-type IsBase<T> = [T] extends [BASE] ? true : false;
-type IsDefault<T> = [T] extends [DEFAULT] ? true : false;
-
-type ExSelector<T> = Pretty<{
-  [K in keyof T]: If<IsClassName<T[K]>, T[K], never>;
-}>;
-
-type ExInput<T> = Pretty<{
-  [BASE]?: ClassName;
-  [DEFAULT]?: ExProps<T>;
-}> & {
-  [K in keyof T]?: If<
-    IsBase<K>,
-    ClassName,
-    If<IsDefault<K>, ExProps<T>, ExSelector<T[K]>>
+namespace Ex {
+  type StdRequired<T> = { [P in keyof T]-?: T[P] };
+  type _Required<T, K extends keyof T = keyof T> = Omit<
+    T & StdRequired<Pick<T, K & keyof T>>,
+    never
   >;
-};
 
-type ExProps<T> = Pretty<{
-  [K in Exclude<keyof T, BASE | DEFAULT>]?: KeyToLiteral<T[K]>;
-}>;
+  export type ClassName = ClassName[] | string | false | null | undefined;
 
-type Key = string | number;
+  export type Key = string | boolean | number | null | undefined;
 
-type ResolvedExSelector = Record<Key, string>;
+  export type Required<
+    T extends RawCallback,
+    K extends keyof Ex<T> = keyof Ex<T>,
+  > = _Required<Ex<T>, K>;
 
-type ResolvedExSelectorMeta = {
-  /** @internal */
-  _default: string | undefined;
-  /** @internal */
-  _selector: ResolvedExSelector;
-};
+  export type Props<T> = Pretty<{
+    [K in Exclude<keyof T, typeof DEFAULT>]?: ToLiteral<
+      keyof T[K],
+      Exclude<Key, string>
+    >;
+  }>;
 
-type ResolvedExSelectors = Record<Key, ResolvedExSelectorMeta>;
+  export type Input<T> = Pretty<{
+    [DEFAULT]?: Props<T>;
+  }> & {
+    [K in keyof T]?: K extends typeof DEFAULT ? Props<T> : Selectors<T[K]>;
+  };
 
-type ResolvedEx = {
-  /** @internal */
-  _base: string | undefined;
-  /** @internal */
-  _selectors: ResolvedExSelectors;
-};
+  type Selectors<T> = Pretty<{
+    [K in keyof T]: T[K] extends string ? T[K] : never;
+  }>;
 
-type RawExDefault = Record<Key, string | number>;
+  type RawDefault = Record<string, Key>;
+  type RawSelector = Record<string, string>;
 
-type RawExInput = Partial<
-  Record<BASE, ClassName> &
-    Record<DEFAULT, RawExDefault> &
-    Record<Key, RawExSelector>
->;
+  export type RawInput = Partial<
+    Record<typeof DEFAULT, RawDefault> & Record<string, RawSelector>
+  >;
 
-type RawExSelector = Record<Key, ClassName>;
-type RawExProps = Record<Key, string | number | boolean | undefined>;
+  export type RawProps = Record<string, Key>;
 
-function join(className: ClassName): string {
-  return Array.isArray(className) ? className.join(" ") : className;
+  export type RawCallback = (props: RawProps) => string;
 }
 
-function resolveEx(ex: RawExInput): ResolvedEx {
-  const exDefault = ex[DEFAULT] ?? {};
+type Ex<T extends Ex.RawCallback> = Pretty<Parameters<T>[0]>;
 
-  const resoledBase = ex[BASE] && join(ex[BASE]);
-  const resoledSelectors: ResolvedExSelectors = {};
+function ex<T>(input: Ex.Input<T>) {
+  const bind = { _input: input as Ex.RawInput };
+  return callback.bind(bind) as (props: Ex.Props<T>) => string;
+}
 
-  for (const exKey in ex) {
-    if (exKey !== BASE) {
-      const selector = ex[exKey];
+ex.join = function (...classNames: Ex.ClassName[]) {
+  return resolveClassName(classNames);
+};
 
-      const resoledSelector: ResolvedExSelector = {};
-      const defaultKey = exDefault[`${exKey}`];
-      let defaultClassName: string | undefined;
+function callback(this: { _input: Ex.RawInput }, props: Ex.RawProps): string {
+  let result = "";
 
-      for (const selectorKey in selector) {
-        let className = selector[selectorKey];
-        if (className) {
-          className = join(className);
-          resoledSelector[selectorKey] = className;
-          if (defaultKey && `${defaultKey}` === selectorKey) {
-            defaultClassName = className;
-          }
-        }
+  for (const selector in this._input) {
+    if (selector !== DEFAULT) {
+      const key = props[selector] ?? this._input.default?.[selector];
+      const className = this._input[selector]?.[`${key}`];
+
+      if (className) {
+        if (result) result += " ";
+        result += className;
       }
-
-      resoledSelectors[exKey] = {
-        _default: defaultClassName,
-        _selector: resoledSelector,
-      };
     }
   }
-  return { _base: resoledBase, _selectors: resoledSelectors };
+
+  return result;
 }
 
-function exCallback(this: ResolvedEx, props: RawExProps): string {
-  let classNames = "";
+function resolveClassName(className: Ex.ClassName): string {
+  if (typeof className === "string") {
+    return className;
+  } else if (Array.isArray(className)) {
+    let result = "";
 
-  if (this._base) classNames = this._base;
-
-  for (const selectorKey in this._selectors) {
-    const selector = this._selectors[selectorKey];
-    const propsKey = props[selectorKey];
-
-    const className =
-      propsKey === undefined
-        ? selector?._default
-        : selector?._selector[`${propsKey}`];
-
-    if (className) {
-      if (classNames) classNames += " ";
-      classNames += className;
+    for (const _className of className) {
+      if (_className) {
+        if (result) result += " ";
+        result += resolveClassName(_className);
+      }
     }
+
+    return result;
+  } else {
+    return "";
   }
-  return classNames;
 }
-
-type Ex<T extends (props: RawExProps) => string> = Pretty<Parameters<T>[0]>;
-
-function ex<T>(ex: ExInput<T>) {
-  const resolvedEx = resolveEx(ex as RawExInput);
-  return exCallback.bind(resolvedEx) as (props: ExProps<T>) => string;
-}
-
-ex.join = join;

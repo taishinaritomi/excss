@@ -5,7 +5,6 @@ import { ex } from "./ex";
 describe("ex", () => {
   it("basic", () => {
     const style = ex({
-      base: "base",
       default: { boolean: true },
       string: {
         red: "string-red",
@@ -21,7 +20,7 @@ describe("ex", () => {
       },
     });
 
-    expect(style({ number: 1 })).equals("base number-1 is-true");
+    expect(style({ number: 1 })).equals("number-1 is-true");
 
     type Style = {
       string?: "red" | "blue";
