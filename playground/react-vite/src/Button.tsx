@@ -3,10 +3,6 @@ import { css, ex } from "excss";
 import { useReducer } from "react";
 
 const style = ex({
-  base: css`
-    padding: 2rem;
-    border-radius: 0.5rem;
-  `,
   isDisabled: {
     true: css`
       background-color: red;
