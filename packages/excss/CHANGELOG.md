@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.8
+
+### Patch Changes
+
+- [#16](https://github.com/taishinaritomi/excss/pull/16) [`4f162a0`](https://github.com/taishinaritomi/excss/commit/4f162a0ac75e474ba3fe1cf4d6ed15a4652b7e20) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - feat: make the ex API simpler.
+
 ## 0.0.7
 
 ### Patch Changes
