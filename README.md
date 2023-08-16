@@ -32,8 +32,7 @@ export function Component(props: Props) {
       style={{ [`--${FILE_ID}-rotate`]: `${rotate}deg` }}
       className={ex.join(
         css`
-          transform: rotate(var(--#{$FILE_ID}-rotate) ;);
-
+          transform: rotate(var(--#{$FILE_ID}-rotate));
           $animation-spin: unique();
           animation: $animation_spin 0.5s;
 
@@ -45,19 +44,21 @@ export function Component(props: Props) {
               transform: rotate(360deg);
             }
           }
-
-          display: flex;
-          gap: $space_sm;
-
-          @include mediaQuery(sm) {
-            background-color: black;
-          }
-
-          &:hover {
-            color: green;
-          }
         `,
-        isDisabled && css``,
+        css`
+          color: $primary;
+          gap: $space_sm;
+        `,
+        !isDisabled &&
+          css`
+            @include mediaQuery(sm) {
+              background-color: black;
+            }
+
+            &:hover {
+              background-color: green;
+            }
+          `,
       )}
     >
       <button className={button(props.buttonStyle)}>Button</button>
