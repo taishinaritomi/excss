@@ -15,20 +15,73 @@ describe("ex", () => {
         1: "number-1",
       },
       boolean: {
-        true: "is-true",
-        false: "is-false",
+        true: "boolean-true",
+        false: "boolean-false",
       },
     });
 
-    expect(style({ number: 1 })).equals("number-1 is-true");
+    expect(style({ number: 1, boolean: undefined })).equals(
+      "number-1 boolean-true",
+    );
 
-    type Style = {
+    expectTypeOf(style).toEqualTypeOf<
+      (props?: {
+        string?: "red" | "blue";
+        number?: 0 | 1;
+        boolean?: boolean;
+      }) => string
+    >();
+
+    /// Ex
+
+    expectTypeOf<Ex<typeof style>>().toEqualTypeOf<{
       string?: "red" | "blue";
       number?: 0 | 1;
       boolean?: boolean;
-    };
+    }>();
 
-    expectTypeOf(style).toEqualTypeOf<(props: Style) => string>();
-    expectTypeOf<Ex<typeof style>>().toEqualTypeOf<Style>();
+    /// Ex.Required
+
+    expectTypeOf<Ex.Required<typeof style>>().toEqualTypeOf<{
+      string: "red" | "blue";
+      number: 0 | 1;
+      boolean: boolean;
+    }>();
+
+    expectTypeOf<
+      Ex.Required<typeof style, "string" | "number">
+    >().toEqualTypeOf<{
+      string?: "red" | "blue";
+      number?: 0 | 1;
+      boolean: boolean;
+    }>();
+
+    expectTypeOf<Ex.Required<Ex<typeof style>>>().toEqualTypeOf<{
+      string: "red" | "blue";
+      number: 0 | 1;
+      boolean: boolean;
+    }>();
+
+    /// Ex.Optional
+
+    expectTypeOf<Ex.Optional<typeof style>>().toEqualTypeOf<{
+      string?: "red" | "blue";
+      number?: 0 | 1;
+      boolean?: boolean;
+    }>();
+
+    expectTypeOf<
+      Ex.Optional<typeof style, "string" | "number">
+    >().toEqualTypeOf<{
+      string: "red" | "blue";
+      number: 0 | 1;
+      boolean?: boolean;
+    }>();
+
+    expectTypeOf<Ex.Optional<Ex<typeof style>>>().toEqualTypeOf<{
+      string?: "red" | "blue";
+      number?: 0 | 1;
+      boolean?: boolean;
+    }>();
   });
 });
