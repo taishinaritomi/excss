@@ -52,11 +52,12 @@ export function Component(props: Props) {
           @include mediaQuery(sm) {
             background-color: black;
           }
+
+          &:hover {
+            color: green;
+          }
         `,
-        isDisabled &&
-          css`
-            display: none;
-          `,
+        isDisabled && css``,
       )}
     >
       <button className={button(props.buttonStyle)}>Button</button>
