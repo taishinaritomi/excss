@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.9
+
+### Patch Changes
+
+- [#18](https://github.com/taishinaritomi/excss/pull/18) [`f0d4886`](https://github.com/taishinaritomi/excss/commit/f0d48866d2eac5d4d5917c95b691fb9092e87312) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - feat: strict the types for the ex API and add tests
+
 ## 0.0.8
 
 ### Patch Changes
