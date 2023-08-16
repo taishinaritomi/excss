@@ -3,7 +3,8 @@
 excss is a small, simple, zero-runtime CSS-in-JS library with just two APIs.
 
 ```ts
-import { css, ex, Ex, FILE_ID } from "excss";
+import { css, ex, FILE_ID } from "excss";
+import type { Ex } from "excss";
 import { useState } from "react";
 
 const button = ex({
