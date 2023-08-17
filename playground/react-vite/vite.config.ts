@@ -1,5 +1,5 @@
 import React from "@vitejs/plugin-react";
-import { ExcssVitePlugin } from "excss/vite";
+import { Excss } from "excss/vite";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 
@@ -10,7 +10,7 @@ export default defineConfig({
   },
   plugins: [
     React(),
-    ExcssVitePlugin({
+    Excss({
       variants: {
         red: "#ff0000",
       },

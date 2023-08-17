@@ -1,4 +1,4 @@
-import { ExcssVitePlugin } from "excss/vite";
+import { Excss } from "excss/vite";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 import Solid from "vite-plugin-solid";
@@ -10,7 +10,7 @@ export default defineConfig({
   },
   plugins: [
     Solid(),
-    ExcssVitePlugin(),
+    Excss(),
     Inspect({
       build: true,
       outputDir: ".inspect",

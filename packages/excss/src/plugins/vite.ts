@@ -3,14 +3,14 @@ import * as vite from "vite";
 import type { Variants } from "../compiler";
 import { transform } from "../compiler";
 
-export { ExcssVitePlugin };
+export { excss, excss as Excss };
 
 const DEFAULT_INCLUDE = /\.(js|jsx|ts|tsx)$/;
 
 const VIRTUAL_MODULE_ID = "virtual:ex.css";
 const RESOLVED_VIRTUAL_MODULE_ID = "\0" + VIRTUAL_MODULE_ID;
 
-type ExcssViteOption = {
+type ExcssOption = {
   /**
    * @default /\.(js|jsx|ts|tsx)$/
    */
@@ -29,7 +29,7 @@ type ExcssViteOption = {
   inject?: string | undefined;
 };
 
-function ExcssVitePlugin(option?: ExcssViteOption): Vite.Plugin {
+function excss(option?: ExcssOption): Vite.Plugin {
   const filter = vite.createFilter(
     option?.include ?? DEFAULT_INCLUDE,
     option?.exclude,

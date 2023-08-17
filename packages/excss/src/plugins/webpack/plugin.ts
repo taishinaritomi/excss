@@ -1,11 +1,11 @@
 import type { Compiler } from "webpack";
-import type { ExcssWebpackLoaderOption } from "./loader";
+import type { ExcssLoaderOption } from "./loader";
 
-export type ExcssWebpackPluginOption = ExcssWebpackLoaderOption;
+export type ExcssOption = ExcssLoaderOption;
 
-export class ExcssWebpackPlugin {
-  option: ExcssWebpackPluginOption;
-  constructor(option?: ExcssWebpackPluginOption) {
+class ExcssPlugin {
+  option: ExcssOption;
+  constructor(option?: ExcssOption) {
     this.option = option ?? {};
   }
   apply(compiler: Compiler): void {
@@ -21,3 +21,5 @@ export class ExcssWebpackPlugin {
     });
   }
 }
+
+export { ExcssPlugin };

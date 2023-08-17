@@ -10,14 +10,14 @@ type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
 const virtualLoader = "excss/webpack/virtualLoader";
 const virtualCSS = "excss/assets/ex.css";
 
-export type ExcssWebpackLoaderOption = {
+export type ExcssLoaderOption = {
   cssOutDir?: string | undefined;
   variants?: Variants | undefined;
   inject?: string | undefined;
 };
 
-export function ExcssWebpackLoader(
-  this: LoaderContext<ExcssWebpackLoaderOption>,
+function excssLoader(
+  this: LoaderContext<ExcssLoaderOption>,
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
 ) {
@@ -77,4 +77,4 @@ function createCSSImportCode(
   }
 }
 
-export default ExcssWebpackLoader;
+export default excssLoader;

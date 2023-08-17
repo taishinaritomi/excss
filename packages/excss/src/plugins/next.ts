@@ -4,8 +4,8 @@ import { getGlobalCssLoader } from "next/dist/build/webpack/config/blocks/css/lo
 import type { ConfigurationContext } from "next/dist/build/webpack/config/utils";
 import type { Configuration, RuleSetRule } from "webpack";
 import type { Variants } from "../compiler";
-import { ExcssWebpackPlugin } from "./webpack/plugin";
-import type { ExcssWebpackPluginOption } from "./webpack/plugin";
+import type { ExcssOption } from "./webpack/plugin";
+import { ExcssPlugin } from "./webpack/plugin";
 
 type ExcssConfig = {
   /**
@@ -14,13 +14,15 @@ type ExcssConfig = {
   variants?: Variants;
 };
 
-export function createExcssPlugin(excssConfig: ExcssConfig) {
+export { createExcss };
+
+function createExcss(excssConfig: ExcssConfig) {
   return (nextConfig: NextConfig): NextConfig => {
-    return Object.assign({}, nextConfig, excssPlugin(nextConfig, excssConfig));
+    return Object.assign({}, nextConfig, excss(nextConfig, excssConfig));
   };
 }
 
-function excssPlugin(nextConfig: NextConfig, excssConfig: ExcssConfig) {
+function excss(nextConfig: NextConfig, excssConfig: ExcssConfig) {
   return {
     webpack(config: Configuration & ConfigurationContext, options) {
       const { dir, dev, isServer, config: resolvedNextConfig } = options;
@@ -60,12 +62,12 @@ function excssPlugin(nextConfig: NextConfig, excssConfig: ExcssConfig) {
 
       const isAppDir = resolvedNextConfig.experimental.appDir ?? true;
 
-      const excssWebpackPluginOption: ExcssWebpackPluginOption = {
+      const excssWebpackPluginOption: ExcssOption = {
         cssOutDir: isAppDir ? "./.next/cache/excss" : undefined,
         variants: excssConfig.variants,
       };
 
-      config.plugins?.push(new ExcssWebpackPlugin(excssWebpackPluginOption));
+      config.plugins?.push(new ExcssPlugin(excssWebpackPluginOption));
 
       if (typeof nextConfig.webpack === "function") {
         return nextConfig.webpack(config, options) as unknown;

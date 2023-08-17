@@ -1,11 +1,11 @@
 const createBundleAnalyzer = require("@next/bundle-analyzer");
-const { createExcssPlugin } = require("excss/next");
+const { createExcss } = require("excss/next");
 
 const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env["ANALYZE"] === "true",
 });
 
-const withExcss = createExcssPlugin({
+const withExcss = createExcss({
   variants: {
     primary: "green",
     sm: '"max-width: 300px"',
