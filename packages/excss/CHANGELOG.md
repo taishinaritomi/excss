@@ -1,5 +1,11 @@
 # excss
 
+## 0.0.10
+
+### Patch Changes
+
+- [#22](https://github.com/taishinaritomi/excss/pull/22) [`813a355`](https://github.com/taishinaritomi/excss/commit/813a35596c5e67373f50f042217323e06e62f93d) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - feat: change the export name of the plugin
+
 ## 0.0.9
 
 ### Patch Changes
