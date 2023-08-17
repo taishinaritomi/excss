@@ -79,6 +79,7 @@ Install excss.
 `npm i excss` `pnpm i excss` `yarn add excss`
 
 Setup the compiler according to the bundler.
+
 ```js
 // next.config.js
 const { createExcss } = require("excss/next");
