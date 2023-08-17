@@ -56,6 +56,10 @@ export function Component(props: Props) {
               background-color: black;
             }
 
+            @media screen and (max-width: $sm) {
+              background-color: black;
+            }
+
             &:hover {
               background-color: green;
             }
@@ -66,4 +70,63 @@ export function Component(props: Props) {
     </div>
   );
 }
+```
+
+## Setups
+
+Install excss.
+
+`npm i excss` `pnpm i excss` `yarn add excss`
+
+Setup the compiler according to the bundler.
+```js
+// next.config.js
+const { createExcss } = require("excss/next");
+
+const withExcss = createExcss({
+  // excss options
+});
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = withExcss(nextConfig);
+```
+
+```ts
+// vite.config.ts
+import { Excss } from "excss/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    Excss({
+      // excss options
+    }),
+  ],
+});
+```
+
+```js
+// webpack.config.js
+const { ExcssPlugin } = require("excss/webpack");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  // webpack options
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+    ],
+  },
+  plugins: [
+    new ExcssPlugin({
+      // excss options
+    }),
+    new MiniCssExtractPlugin(),
+  ],
+};
 ```
