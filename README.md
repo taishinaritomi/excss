@@ -78,7 +78,7 @@ Install excss.
 
 `npm i excss` `pnpm i excss` `yarn add excss`
 
-Setup the compiler according to the bundler.
+Setting up the compiler based on the bundler.
 
 ```js
 // next.config.js
