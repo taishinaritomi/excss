@@ -1,5 +1,5 @@
 const path = require("node:path");
-const { ExcssWebpackPlugin } = require("excss/webpack");
+const { ExcssPlugin } = require("excss/webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -40,7 +40,7 @@ module.exports = {
     filename: "[name].js",
   },
   plugins: [
-    new ExcssWebpackPlugin(),
+    new ExcssPlugin(),
     new HtmlWebpackPlugin({ template: path.join(__dirname, "index.html") }),
     new MiniCssExtractPlugin(),
   ],
