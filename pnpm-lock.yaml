@@ -79,7 +79,7 @@ importers:
   packages/excss:
     dependencies:
       '@excss/compiler':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../compiler
     devDependencies:
       next:
