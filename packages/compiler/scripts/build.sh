@@ -9,6 +9,8 @@ if(typeof globalThis.crypto === 'undefined') {
 }
 " >> binding/wasm-node/excss_compiler.js
 
+echo '{"type":"commonjs"}' >> binding/wasm-node/package.json
+
 pnpm wasm-pack build --target=web --no-pack --out-dir=../../binding/wasm-web --out-name=excss_compiler ./crates/compiler_wasm
 
 echo '{"type":"module"}' >> binding/wasm-web/package.json
