@@ -16,7 +16,7 @@ jobs:
       - run: pnpm run test
       - uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish --dry-run --no-git-checks
+          publish: pnpm changeset tag
           commit: "publish packages"
           title: "chore(changesets): 🦋 publish packages"
         env:
