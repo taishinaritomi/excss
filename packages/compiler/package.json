@@ -1,0 +1,33 @@
+{
+  "name": "@excss/compiler",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Taishi Naritomi",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taishinaritomi/excss.git",
+    "directory": "packages/compiler"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "./binding/wasm-web/excss_compiler.d.ts",
+  "main": "./binding/wasm-node/excss_compiler.js",
+  "exports": {
+    ".": {
+      "types": "./binding/wasm-node/excss_compiler.d.ts",
+      "browser": "./binding/wasm-web/excss_compiler.js",
+      "default": "./binding/wasm-node/excss_compiler.js"
+    }
+  },
+  "files": [
+    "binding",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "run-p test:*",
+    "test:vitest": "vitest run",
+    "test:vitest-type": "vitest typecheck --run",
+    "build": "./scripts/build.sh"
+  }
+}

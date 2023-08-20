@@ -3,6 +3,7 @@ node_modules
 .next
 .inspect
 dist
+binding
 target
 target_check
 .turbo

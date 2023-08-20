@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { transform } from "@excss/compiler";
+import type { Variants } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
-import { transform } from "../../compiler";
-import type { Variants } from "../../compiler";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
 

@@ -1,6 +1,6 @@
 [workspace]
 members = [
-  "packages/excss/crates/*",
+  "packages/compiler/crates/*",
 ]
 resolver = "2"
 

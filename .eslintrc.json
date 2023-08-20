@@ -60,6 +60,7 @@
       "files": [
         "./**/vite.config.ts",
         "./**/vitest.config.ts",
+        "./packages/excss/src/compiler.ts",
         "./packages/excss/src/plugins/webpack/{virtualLoader,loader}.ts",
         "./playground/next/src/app/**/{page,layout,loading,error,template,head}.tsx",
         "./playground/next/src/pages/**"
