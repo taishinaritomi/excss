@@ -1,6 +1,6 @@
 name: release
 on:
-  pull_request:
+  push:
     branches:
       - retry-release
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
       - run: pnpm run test
       - uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish --dry-run
+          publish: pnpm changeset publish --dry-run --no-git-checks
           commit: "publish packages"
           title: "chore(changesets): 🦋 publish packages"
         env:
