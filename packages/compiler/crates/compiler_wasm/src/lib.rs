@@ -26,6 +26,8 @@ export type Result = {
 };
 
 export function transform(code: string, config: Config): Result;
+
+export type Variants = Record<string, string | number>;
 "#;
 
 #[derive(Serialize, Deserialize)]

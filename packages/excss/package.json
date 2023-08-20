@@ -20,6 +20,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./compiler": {
+      "types": "./dist/_types/compiler.d.ts",
+      "import": "./dist/compiler.mjs",
+      "require": "./dist/compiler.cjs"
+    },
     "./vite": {
       "types": "./dist/_types/plugins/vite.d.ts",
       "import": "./dist/plugins/vite.mjs",
@@ -49,6 +54,9 @@
   },
   "typesVersions": {
     "*": {
+      "compiler": [
+        "./dist/_types/compiler"
+      ],
       "vite": [
         "./dist/_types/plugins/vite"
       ],
@@ -79,9 +87,11 @@
     "test:vitest-type": "vitest typecheck --run",
     "build": "tsx ./scripts/build.ts"
   },
+  "dependencies": {
+    "@excss/compiler": "workspace:^"
+  },
   "devDependencies": {
     "next": "^13.4.10",
-    "prettier": "^3.0.0",
     "vite": "^4.4.4",
     "webpack": "^5.88.1"
   },

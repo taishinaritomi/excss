@@ -1,7 +1,7 @@
+import type { Variants } from "@excss/compiler";
+import { transform } from "@excss/compiler";
 import type * as Vite from "vite";
 import * as vite from "vite";
-import type { Variants } from "../compiler";
-import { transform } from "../compiler";
 
 export { excss, excss as Excss };
 

@@ -1,6 +1,6 @@
 import { format } from "prettier";
 import { describe, it, expect } from "vitest";
-import { transform } from "./compiler";
+import { transform } from "../binding/wasm-node/excss_compiler";
 
 describe("transform", () => {
   it("basic", async () => {
