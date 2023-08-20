@@ -3,11 +3,7 @@ set -e
 pnpm wasm-pack build --target=nodejs --no-pack --out-dir=../../binding/wasm-node --out-name=excss_compiler ./crates/compiler_wasm
 
 # https://docs.rs/getrandom/latest/getrandom/#nodejs-es-module-support
-echo "
-if(typeof globalThis.crypto === 'undefined') {
-  globalThis.crypto = require('crypto').webcrypto
-}
-" >> binding/wasm-node/excss_compiler.js
+echo "globalThis.crypto ??= require('crypto').webcrypto;" >> binding/wasm-node/excss_compiler.js
 
 echo '{"type":"commonjs"}' >> binding/wasm-node/package.json
 
