@@ -2,7 +2,7 @@ name: release
 on:
   push:
     branches:
-      - retry-release
+      - main
   workflow_dispatch:
 jobs:
   release:

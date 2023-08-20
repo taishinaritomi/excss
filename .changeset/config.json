@@ -8,7 +8,7 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "retry-release",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": ["@excss/playground-*"]
 }
