@@ -9,9 +9,7 @@ use swc_core::{
     },
 };
 
-use crate::{
-    compiler::compile_css, hash::generate_hash, visitor::search_import_visitor::SearchImportVisitor,
-};
+use crate::{compiler::compile_css, visitor::search_import_visitor::SearchImportVisitor};
 
 pub struct TransformVisitor<'a> {
     target_css_ident_ids: Vec<ast::Id>,
@@ -129,25 +127,16 @@ impl VisitMut for TransformVisitor<'_> {
                     let mut class_name = "".to_string();
 
                     if !css.is_empty() {
-                        let hash_input = format!("{}{}", &self.file_id, &self.hash_count);
+                        let hash_salt = format!("{}+{}", &self.file_id, &self.hash_count);
+                        self.hash_count += 1;
 
-                        let css_hash = generate_hash(&hash_input)
-                            .map_err(|err| {
+                        match compile_css::compile(css, self.inject_css.clone(), hash_salt) {
+                            Ok(output) => {
+                                class_name = output.class_name;
+                                self.css_list.insert(output.css);
+                            }
+                            Err(err) => {
                                 errors::HANDLER.with(|h| h.err(&err.to_string()));
-                            })
-                            .ok();
-
-                        if let Some(css_hash) = css_hash {
-                            self.hash_count += 1;
-
-                            match compile_css::compile(css, self.inject_css.clone(), css_hash) {
-                                Ok(output) => {
-                                    class_name = output.class_name;
-                                    self.css_list.insert(output.css);
-                                }
-                                Err(err) => {
-                                    errors::HANDLER.with(|h| h.err(&err.to_string()));
-                                }
                             }
                         }
                     }

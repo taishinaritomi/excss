@@ -21,10 +21,21 @@ function excssLoader(
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
 ) {
-  const option = this.getOptions();
   try {
+    const option = this.getOptions();
+
+    const packageJsonPath = path.join(process.cwd(), "package.json");
+
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonPath).toString(),
+    ) as { name?: string };
+
+    this.addDependency(packageJsonPath);
+
     const result = transform(code, {
       filename: this.resourcePath,
+      root: process.cwd(),
+      packageName: packageJson.name,
       variants: option.variants,
       inject: option.inject,
     });
