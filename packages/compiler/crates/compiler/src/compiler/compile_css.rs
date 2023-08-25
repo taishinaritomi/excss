@@ -12,14 +12,14 @@ scoped_thread_local!(static CONTEXT: Context);
 
 struct Context {
     count: Mutex<usize>,
-    hash_prefix: String,
+    unique_salt: String,
 }
 
 impl Context {
-    fn new(hash_prefix: String) -> Self {
+    fn new(unique_salt: String) -> Self {
         Self {
+            unique_salt,
             count: Mutex::new(0),
-            hash_prefix,
         }
     }
 
@@ -31,7 +31,7 @@ impl Context {
 
     fn get_unique_hash(&self) -> Result<String, io::Error> {
         let count = self.get_unique_count();
-        let hash_input = format!("{}{}", self.hash_prefix, count);
+        let hash_input = format!("{}+{}", self.unique_salt, count);
         generate_hash(&hash_input)
     }
 }
@@ -52,13 +52,13 @@ pub struct Output {
 pub fn compile<T: Into<String>>(
     input: T,
     inject: T,
-    hash_prefix: T,
+    unique_salt: T,
 ) -> Result<Output, Box<dyn Error>> {
     let input = input.into();
     let inject = inject.into();
-    let hash_prefix = hash_prefix.into();
+    let unique_salt: String = unique_salt.into();
 
-    let result = CONTEXT.set(&Context::new(hash_prefix), || {
+    let result = CONTEXT.set(&Context::new(unique_salt), || {
         let option = grass::Options::default()
             .input_syntax(grass::InputSyntax::Scss)
             .add_custom_fn("unique", Builtin::new(unique));

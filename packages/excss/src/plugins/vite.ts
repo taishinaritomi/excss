@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { Variants } from "@excss/compiler";
 import { transform } from "@excss/compiler";
 import type * as Vite from "vite";
@@ -35,8 +37,23 @@ function excss(option?: ExcssOption): Vite.Plugin {
     option?.exclude,
   );
 
+  let root: string;
+  let packageName: string | undefined;
+
   return {
     name: "excss",
+
+    configResolved(viteConfig) {
+      root = viteConfig.root;
+      const packageJson = JSON.parse(
+        fs.readFileSync(path.join(root, "package.json")).toString(),
+      ) as { name?: string };
+
+      console.log(packageJson.name);
+
+      viteConfig.configFileDependencies.push("package.json");
+      packageName = packageJson.name;
+    },
 
     resolveId(id) {
       const [filename, params] = id.split("?");
@@ -66,6 +83,8 @@ function excss(option?: ExcssOption): Vite.Plugin {
 
       const result = transform(code, {
         filename,
+        root,
+        packageName,
         variants: option?.variants,
         inject: option?.inject,
       });
