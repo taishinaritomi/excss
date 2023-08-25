@@ -14,6 +14,8 @@ export type ExcssLoaderOption = {
   cssOutDir?: string | undefined;
   variants?: Variants | undefined;
   inject?: string | undefined;
+  packageName?: string | undefined;
+  configDependencies?: string[] | undefined;
 };
 
 function excssLoader(
@@ -24,27 +26,27 @@ function excssLoader(
   try {
     const option = this.getOptions();
 
-    const packageJsonPath = path.join(process.cwd(), "package.json");
-
-    const packageJson = JSON.parse(
-      fs.readFileSync(packageJsonPath).toString(),
-    ) as { name?: string };
-
-    this.addDependency(packageJsonPath);
-
     const result = transform(code, {
       filename: this.resourcePath,
       root: process.cwd(),
-      packageName: packageJson.name,
+      packageName: option.packageName,
       variants: option.variants,
       inject: option.inject,
     });
+
     if (result.type === "Ok") {
       if (result.css) {
         const importCode = createCSSImportCode(result.css, {
           context: this,
           cssOutDir: option.cssOutDir,
         });
+
+        if (option.configDependencies) {
+          for (const dependency of option.configDependencies) {
+            this.addDependency(dependency);
+          }
+        }
+
         this.callback(undefined, `${result.code}\n${importCode}`);
       } else {
         this.callback(undefined, code, map);

@@ -9,6 +9,9 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
+  performance: {
+    hints: false,
+  },
   devServer: {},
   module: {
     rules: [
