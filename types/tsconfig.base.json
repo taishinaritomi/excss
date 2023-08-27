@@ -3,7 +3,9 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "noEmit": true,
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
     "jsx": "preserve",
     "checkJs": false
   }

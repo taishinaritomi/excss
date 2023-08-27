@@ -2,10 +2,10 @@ import type { Variants } from "@excss/compiler";
 import type { NextConfig } from "next";
 import { lazyPostCSS } from "next/dist/build/webpack/config/blocks/css";
 import { getGlobalCssLoader } from "next/dist/build/webpack/config/blocks/css/loaders";
-import type { ConfigurationContext } from "next/dist/build/webpack/config/utils";
+import type { ConfigurationContext } from "next/dist/build/webpack/config/utils.js";
 import type { Configuration, RuleSetRule } from "webpack";
-import type { ExcssOption } from "./webpack/plugin";
-import { ExcssPlugin } from "./webpack/plugin";
+import type { ExcssOption } from "./webpack/plugin.ts";
+import { ExcssPlugin } from "./webpack/plugin.ts";
 
 type ExcssConfig = {
   /**

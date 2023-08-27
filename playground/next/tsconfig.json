@@ -1,12 +1,12 @@
 {
   "extends": "../../types/tsconfig.base.json",
   "compilerOptions": {
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "target": "ES2018",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "jsx": "preserve",
-    "moduleResolution": "node",
     "noEmit": true,
     "isolatedModules": true,
     "resolveJsonModule": true,

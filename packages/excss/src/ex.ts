@@ -3,7 +3,7 @@ import type {
   ToLiteral,
   Required as _Required,
   Optional as _Optional,
-} from "./utils/types";
+} from "./utils/types.ts";
 
 export { ex };
 export type { Ex };

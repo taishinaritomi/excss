@@ -1,6 +1,7 @@
 {
   "extends": "../../types/tsconfig.base.json",
   "compilerOptions": {
+    "moduleResolution": "bundler",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "esModuleInterop": false,
     "useDefineForClassFields": true,
