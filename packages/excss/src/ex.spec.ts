@@ -1,6 +1,6 @@
 import { describe, it, expect, expectTypeOf } from "vitest";
-import type { Ex } from "./ex";
-import { ex } from "./ex";
+import type { Ex } from "./ex.ts";
+import { ex } from "./ex.ts";
 
 describe("ex", () => {
   it("basic", () => {

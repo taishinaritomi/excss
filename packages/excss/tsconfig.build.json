@@ -1,4 +1,10 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist/_types",
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true
+  },
   "exclude": ["src/__fixture__/**", "src/**/*.spec.*"]
 }

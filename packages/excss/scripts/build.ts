@@ -1,6 +1,4 @@
 import childProcess from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
 import * as esBuild from "esbuild";
 
 function cmd(command: string) {
@@ -59,27 +57,9 @@ async function js() {
   await Promise.all(buildQueue);
 }
 
-async function dts() {
-  const typesOutDir = path.join("dist/_types");
-  fs.mkdirSync(typesOutDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(typesOutDir, "package.json"),
-    JSON.stringify({ type: "commonjs" }),
-  );
-
-  await cmd(
-    [
-      "tsc",
-      "--declaration --emitDeclarationOnly",
-      `--outDir ${typesOutDir}`,
-      "-p tsconfig.build.json",
-    ].join(" "),
-  );
-}
-
 async function main() {
   await js();
-  await dts();
+  await cmd("tsc -p tsconfig.build.json");
 }
 
 await main();

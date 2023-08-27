@@ -1,5 +1,5 @@
-const createBundleAnalyzer = require("@next/bundle-analyzer");
-const { createExcss } = require("excss/next");
+import createBundleAnalyzer from "@next/bundle-analyzer";
+import { createExcss } from "excss/next";
 
 const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env["ANALYZE"] === "true",
@@ -18,4 +18,4 @@ const nextConfig = {
   swcMinify: true,
 };
 
-module.exports = withBundleAnalyzer(withExcss(nextConfig));
+export default withBundleAnalyzer(withExcss(nextConfig));

@@ -1,4 +1,4 @@
-export { css } from "./css";
-export { FILE_ID } from "./FILE_ID";
-export { ex } from "./ex";
-export type { Ex } from "./ex";
+export { css } from "./css.ts";
+export { FILE_ID } from "./FILE_ID.ts";
+export { ex } from "./ex.ts";
+export type { Ex } from "./ex.ts";

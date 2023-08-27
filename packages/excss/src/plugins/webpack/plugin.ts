@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Compiler } from "webpack";
-import type { ExcssLoaderOption } from "./loader";
+import type { ExcssLoaderOption } from "./loader.ts";
 
 export type ExcssOption = Omit<
   ExcssLoaderOption,
