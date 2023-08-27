@@ -1,9 +1,13 @@
-const path = require("node:path");
-const { ExcssPlugin } = require("excss/webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { ExcssPlugin } from "excss/webpack";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   mode: "production",
   entry: path.join(__dirname, "./src/index.tsx"),
   resolve: {
