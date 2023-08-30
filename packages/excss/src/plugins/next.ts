@@ -69,10 +69,8 @@ function plugin(nextConfig: NextConfig, excssConfig: ExcssConfig) {
   } as NextConfig;
 }
 
-function createPlugin(excssConfig: ExcssConfig) {
+export default function createPlugin(excssConfig: ExcssConfig) {
   return (nextConfig: NextConfig): NextConfig => {
     return Object.assign({}, nextConfig, plugin(nextConfig, excssConfig));
   };
 }
-
-export default createPlugin;
