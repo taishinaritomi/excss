@@ -1,4 +1,4 @@
-import React from "@vitejs/plugin-react";
+import React from "@vitejs/plugin-react-swc";
 import { variants } from "excss/config";
 import { Excss } from "excss/vite";
 import { defineConfig } from "vite";
