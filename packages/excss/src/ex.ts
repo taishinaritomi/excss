@@ -7,7 +7,7 @@ import type {
 
 const DEFAULT = "default";
 
-namespace Ex {
+export namespace Ex {
   export type ClassName = ClassName[] | string | false | null | undefined;
 
   export type Required<
