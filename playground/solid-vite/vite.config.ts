@@ -1,4 +1,4 @@
-import { Excss } from "excss/vite";
+import Excss from "excss/vite";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
 import Solid from "vite-plugin-solid";

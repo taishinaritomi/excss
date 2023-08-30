@@ -12,7 +12,7 @@ type PackageJson = {
   name?: string;
 };
 
-class ExcssPlugin {
+class Plugin {
   loaderOption: ExcssLoaderOption;
   packageJsonPath = path.join(process.cwd(), "package.json");
 
@@ -53,4 +53,4 @@ class ExcssPlugin {
   }
 }
 
-export { ExcssPlugin };
+export default Plugin;

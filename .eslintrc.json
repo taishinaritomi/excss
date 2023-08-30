@@ -63,7 +63,9 @@
         "./**/next.config.mjs",
         "./**/webpack.config.mjs",
         "./packages/excss/src/compiler.ts",
-        "./packages/excss/src/plugins/webpack/{virtualLoader,loader}.ts",
+        "./packages/excss/src/plugins/vite.ts",
+        "./packages/excss/src/plugins/next.ts",
+        "./packages/excss/src/plugins/webpack/{virtualLoader,loader,plugin}.ts",
         "./playground/next/src/app/**/{page,layout,loading,error,template,head}.tsx",
         "./playground/next/src/pages/**"
       ],
