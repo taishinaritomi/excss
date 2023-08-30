@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { transform } from "@excss/compiler";
-import type { Variants } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
+import { generateFileId } from "../../utils/generateFileId.ts";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
 
@@ -12,10 +12,10 @@ const virtualCSS = "excss/assets/ex.css";
 
 export type ExcssLoaderOption = {
   cssOutDir?: string | undefined;
-  variants?: Variants | undefined;
+  root: string;
+  packageName: string;
   inject?: string | undefined;
-  packageName?: string | undefined;
-  configDependencies?: string[] | undefined;
+  configDependencies: string[];
 };
 
 function excssLoader(
@@ -26,11 +26,15 @@ function excssLoader(
   try {
     const option = this.getOptions();
 
+    const fileId = generateFileId({
+      root: option.root,
+      filename: this.resourcePath,
+      packageName: option.packageName,
+    });
+
     const result = transform(code, {
       filename: this.resourcePath,
-      root: process.cwd(),
-      packageName: option.packageName,
-      variants: option.variants,
+      fileId,
       inject: option.inject,
     });
 
@@ -41,10 +45,8 @@ function excssLoader(
           cssOutDir: option.cssOutDir,
         });
 
-        if (option.configDependencies) {
-          for (const dependency of option.configDependencies) {
-            this.addDependency(dependency);
-          }
+        for (const dependency of option.configDependencies) {
+          this.addDependency(dependency);
         }
 
         this.callback(undefined, `${result.code}\n${importCode}`);

@@ -18,6 +18,7 @@ function cmd(command: string) {
 
 const entryPoints = [
   "src/index.ts",
+  "src/config.ts",
   "src/compiler.ts",
   "src/plugins/webpack/plugin.ts",
   "src/plugins/webpack/loader.ts",

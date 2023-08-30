@@ -24,14 +24,9 @@ export default {
         exclude: [/node_modules/],
         use: [
           {
-            loader: "babel-loader",
+            loader: "esbuild-loader",
             options: {
-              babelrc: false,
-              presets: [
-                "@babel/preset-typescript",
-                ["@babel/preset-react", { runtime: "automatic" }],
-                ["@babel/preset-env", { targets: { browsers: "defaults" } }],
-              ],
+              jsx: "automatic",
             },
           },
         ],

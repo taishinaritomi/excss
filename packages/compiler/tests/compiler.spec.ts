@@ -13,9 +13,9 @@ describe("transform", () => {
 
     const result = transform(before, {
       filename: "index.ts",
-      variants: {
-        red: "red",
-      },
+      inject: `
+        $red: red;
+      `,
     });
 
     if (result.type === "Err") throw new Error("transform error");
@@ -47,7 +47,7 @@ describe("transform", () => {
       const className3 = namespace.css\`color: green\`;
     `;
 
-    const result = transform(before, { filename: "index.ts", variants: {} });
+    const result = transform(before, { filename: "index.ts" });
 
     if (result.type === "Err") throw new Error("transform error");
 
@@ -95,7 +95,9 @@ describe("transform", () => {
 
     const result = transform(before, {
       filename: "index.ts",
-      variants: { blue: "blue" },
+      inject: `
+        $blue: blue;
+      `,
     });
 
     if (result.type === "Err") throw new Error("transform error");

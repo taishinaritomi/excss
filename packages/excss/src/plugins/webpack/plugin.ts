@@ -5,7 +5,7 @@ import type { ExcssLoaderOption } from "./loader.ts";
 
 export type ExcssOption = Omit<
   ExcssLoaderOption,
-  "packageName" | "configDependencies"
+  "root" | "packageName" | "configDependencies"
 >;
 
 type PackageJson = {
@@ -17,26 +17,26 @@ class ExcssPlugin {
   packageJsonPath = path.join(process.cwd(), "package.json");
 
   constructor(option?: ExcssOption) {
-    this.loaderOption = option ?? {};
+    this.loaderOption = {
+      ...option,
+      packageName: this.getPackageName(),
+      root: process.cwd(),
+      configDependencies: [this.packageJsonPath],
+    };
   }
 
   getPackageName() {
     const file = fs.readFileSync(this.packageJsonPath);
     const packageJson = JSON.parse(file.toString()) as PackageJson;
-    this.loaderOption.configDependencies = [this.packageJsonPath];
-    return packageJson.name;
+    return packageJson.name ?? "unknown";
   }
 
   apply(compiler: Compiler): void {
-    compiler.hooks.beforeCompile.tap("excss:beforeCompile", (_params) => {
-      const packageName = this.getPackageName();
-      this.loaderOption.packageName = packageName;
-    });
+    this.loaderOption.root = compiler.context;
 
     compiler.hooks.watchRun.tap("excss:watchRun", (compilation) => {
       if (compilation.modifiedFiles?.has(this.packageJsonPath)) {
-        const packageName = this.getPackageName();
-        this.loaderOption.packageName = packageName;
+        this.loaderOption.packageName = this.getPackageName();
       }
     });
 

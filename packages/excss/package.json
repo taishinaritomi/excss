@@ -20,6 +20,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./config": {
+      "types": "./dist/_types/config.d.ts",
+      "import": "./dist/config.mjs",
+      "require": "./dist/config.cjs"
+    },
     "./compiler": {
       "types": "./dist/_types/compiler.d.ts",
       "import": "./dist/compiler.mjs",
@@ -54,6 +59,9 @@
   },
   "typesVersions": {
     "*": {
+      "config": [
+        "./dist/_types/config"
+      ],
       "compiler": [
         "./dist/_types/compiler"
       ],
