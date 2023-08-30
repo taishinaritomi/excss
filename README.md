@@ -81,39 +81,39 @@ Install excss.
 Setting up the compiler based on the bundler.
 
 ```js
-// next.config.js
-const { createExcss } = require("excss/next");
+// next.config.mjs
+import createExcss from "excss/next";
 
 const withExcss = createExcss({
-  // excss options
+  /* excss options */
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {};
 
-module.exports = withExcss(nextConfig);
+export default withExcss(nextConfig);
 ```
 
 ```ts
 // vite.config.ts
-import { Excss } from "excss/vite";
+import Excss from "excss/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     Excss({
-      // excss options
+      /* excss options */
     }),
   ],
 });
 ```
 
 ```js
-// webpack.config.js
-const { ExcssPlugin } = require("excss/webpack");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// webpack.config.mjs
+import ExcssPlugin from "excss/webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-module.exports = {
+export default {
   // webpack options
   module: {
     rules: [
@@ -125,7 +125,7 @@ module.exports = {
   },
   plugins: [
     new ExcssPlugin({
-      // excss options
+      /* excss options */
     }),
     new MiniCssExtractPlugin(),
   ],
