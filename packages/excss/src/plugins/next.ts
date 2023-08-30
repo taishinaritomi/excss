@@ -1,4 +1,3 @@
-import type { Variants } from "@excss/compiler";
 import type { NextConfig } from "next";
 import { lazyPostCSS } from "next/dist/build/webpack/config/blocks/css/index.js";
 import { getGlobalCssLoader } from "next/dist/build/webpack/config/blocks/css/loaders/index.js";
@@ -11,7 +10,7 @@ type ExcssConfig = {
   /**
    * @default {}
    */
-  variants?: Variants;
+  inject?: string;
 };
 
 export { createExcss };
@@ -64,7 +63,7 @@ function excss(nextConfig: NextConfig, excssConfig: ExcssConfig) {
 
       const excssWebpackPluginOption: ExcssOption = {
         cssOutDir: isAppDir ? "./.next/cache/excss" : undefined,
-        variants: excssConfig.variants,
+        inject: excssConfig.inject,
       };
 
       config.plugins?.push(new ExcssPlugin(excssWebpackPluginOption));

@@ -1,4 +1,5 @@
 import React from "@vitejs/plugin-react";
+import { variants } from "excss/config";
 import { Excss } from "excss/vite";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
@@ -11,10 +12,10 @@ export default defineConfig({
   plugins: [
     React(),
     Excss({
-      variants: {
-        red: "#ff0000",
-      },
       inject: `
+        ${variants({
+          red: "#ff0000",
+        })}
         $breakpoints: (
           400: "screen and (max-width: 400px)",
           800: "screen and (max-width: 800px)",

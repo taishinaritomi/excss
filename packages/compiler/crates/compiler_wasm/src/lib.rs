@@ -9,10 +9,8 @@ extern crate console_error_panic_hook;
 const TYPES: &'static str = r#"
 export type Config = {
     filename: string;
-    root?: string | undefined;
-    packageName?: string | undefined;
+    fileId?: string | undefined;
     inject?: string | undefined;
-    variants?: Variants | undefined;
 }
 
 export type Result = {
@@ -22,14 +20,10 @@ export type Result = {
     css: string;
 } | {
     type: 'Err';
-    errors: Array<{
-        message: string
-    }>
+    errors: Array<{ message: string }>
 };
 
 export function transform(code: string, config: Config): Result;
-
-export type Variants = Record<string, string | number>;
 "#;
 
 #[derive(Serialize, Deserialize)]
