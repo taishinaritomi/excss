@@ -5,12 +5,9 @@ import type {
   Optional as _Optional,
 } from "./utils/types.ts";
 
-export { ex };
-export type { Ex };
-
 const DEFAULT = "default";
 
-namespace Ex {
+export namespace Ex {
   export type ClassName = ClassName[] | string | false | null | undefined;
 
   export type Required<
@@ -37,17 +34,6 @@ namespace Ex {
         Required extends Exclude<keyof T, undefined> ? Required : never
       >;
 }
-
-type Ex<T extends RawCallback> = Pretty<Exclude<Parameters<T>[0], undefined>>;
-
-function ex<T>(input: Input<T>) {
-  const bind = { _input: input as RawInput };
-  return callback.bind(bind) as (props?: Props<T> | undefined) => string;
-}
-
-ex.join = function (...classNames: Ex.ClassName[]) {
-  return resolveClassName(classNames);
-};
 
 type Props<T> = Pretty<{
   [K in Exclude<keyof T, typeof DEFAULT>]?:
@@ -122,3 +108,16 @@ function resolveClassName(className: Ex.ClassName): string {
     return "";
   }
 }
+
+export type Ex<T extends RawCallback> = Pretty<
+  Exclude<Parameters<T>[0], undefined>
+>;
+
+export function ex<T>(input: Input<T>) {
+  const bind = { _input: input as RawInput };
+  return callback.bind(bind) as (props?: Props<T> | undefined) => string;
+}
+
+ex.join = function (...classNames: Ex.ClassName[]) {
+  return resolveClassName(classNames);
+};

@@ -1,6 +1,6 @@
 import createBundleAnalyzer from "@next/bundle-analyzer";
 import { variants } from "excss/config";
-import { createExcss } from "excss/next";
+import createExcss from "excss/next";
 
 const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env["ANALYZE"] === "true",

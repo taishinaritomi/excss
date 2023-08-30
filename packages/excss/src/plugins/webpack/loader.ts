@@ -18,7 +18,7 @@ export type ExcssLoaderOption = {
   configDependencies: string[];
 };
 
-function excssLoader(
+export default function excssLoader(
   this: LoaderContext<ExcssLoaderOption>,
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
@@ -91,5 +91,3 @@ function createCSSImportCode(
     )};`;
   }
 }
-
-export default excssLoader;

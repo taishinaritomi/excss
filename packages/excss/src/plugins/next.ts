@@ -4,7 +4,7 @@ import { getGlobalCssLoader } from "next/dist/build/webpack/config/blocks/css/lo
 import type { ConfigurationContext } from "next/dist/build/webpack/config/utils.js";
 import type { Configuration, RuleSetRule } from "webpack";
 import type { ExcssOption } from "./webpack/plugin.ts";
-import { ExcssPlugin } from "./webpack/plugin.ts";
+import ExcssPlugin from "./webpack/plugin.ts";
 
 type ExcssConfig = {
   /**
@@ -13,15 +13,7 @@ type ExcssConfig = {
   inject?: string;
 };
 
-export { createExcss };
-
-function createExcss(excssConfig: ExcssConfig) {
-  return (nextConfig: NextConfig): NextConfig => {
-    return Object.assign({}, nextConfig, excss(nextConfig, excssConfig));
-  };
-}
-
-function excss(nextConfig: NextConfig, excssConfig: ExcssConfig) {
+function plugin(nextConfig: NextConfig, excssConfig: ExcssConfig) {
   return {
     webpack(config: Configuration & ConfigurationContext, options) {
       const { dir, dev, isServer, config: resolvedNextConfig } = options;
@@ -75,4 +67,10 @@ function excss(nextConfig: NextConfig, excssConfig: ExcssConfig) {
       return config;
     },
   } as NextConfig;
+}
+
+export default function createPlugin(excssConfig: ExcssConfig) {
+  return (nextConfig: NextConfig): NextConfig => {
+    return Object.assign({}, nextConfig, plugin(nextConfig, excssConfig));
+  };
 }

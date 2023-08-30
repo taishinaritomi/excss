@@ -5,8 +5,6 @@ import type * as Vite from "vite";
 import * as vite from "vite";
 import { generateFileId } from "../utils/generateFileId.ts";
 
-export { excss, excss as Excss };
-
 const DEFAULT_INCLUDE = /\.(js|jsx|ts|tsx)$/;
 
 const VIRTUAL_MODULE_ID = "virtual:ex.css";
@@ -27,7 +25,7 @@ type ExcssOption = {
   inject?: string | undefined;
 };
 
-function excss(option?: ExcssOption): Vite.Plugin {
+function plugin(option?: ExcssOption): Vite.Plugin {
   const filter = vite.createFilter(
     option?.include ?? DEFAULT_INCLUDE,
     option?.exclude,
@@ -106,3 +104,5 @@ function excss(option?: ExcssOption): Vite.Plugin {
     },
   };
 }
+
+export default plugin;
