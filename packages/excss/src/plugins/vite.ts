@@ -1,9 +1,9 @@
-import fs from "node:fs";
-import path from "node:path";
 import { transform } from "@excss/compiler";
 import type * as Vite from "vite";
 import * as vite from "vite";
+import type { Config } from "../config.ts";
 import { generateFileId } from "../utils/generateFileId.ts";
+import { loadConfig } from "../utils/loadConfig.ts";
 
 const DEFAULT_INCLUDE = /\.(js|jsx|ts|tsx)$/;
 
@@ -19,10 +19,6 @@ type ExcssOption = {
    * @default undefined
    */
   exclude?: Vite.FilterPattern | undefined;
-  /**
-   * @default undefined
-   */
-  inject?: string | undefined;
 };
 
 function plugin(option?: ExcssOption): Vite.Plugin {
@@ -32,19 +28,23 @@ function plugin(option?: ExcssOption): Vite.Plugin {
   );
 
   let root: string;
-  let packageName: string;
+  let config: Config;
 
   return {
     name: "excss",
 
-    configResolved(viteConfig) {
+    async configResolved(viteConfig) {
       root = viteConfig.root;
-      const packageJson = JSON.parse(
-        fs.readFileSync(path.join(root, "package.json")).toString(),
-      ) as { name?: string };
 
-      viteConfig.configFileDependencies.push("package.json");
-      packageName = packageJson.name ?? "unknown";
+      const { config: _config, dependencies } = await loadConfig(
+        viteConfig.root,
+      );
+
+      config = _config;
+
+      for (const dependency of dependencies) {
+        viteConfig.configFileDependencies.push(dependency);
+      }
     },
 
     resolveId(id) {
@@ -73,12 +73,16 @@ function plugin(option?: ExcssOption): Vite.Plugin {
       if (filename.includes("/node_modules/")) return;
       if (!filter(filename)) return;
 
-      const fileId = generateFileId({ root, filename, packageName });
+      const fileId = generateFileId({
+        root,
+        filename,
+        packageName: config.packageName ?? "unknown",
+      });
 
       const result = transform(code, {
         filename,
         fileId,
-        inject: option?.inject,
+        inject: config.inject,
       });
 
       if (result.type === "Ok") {

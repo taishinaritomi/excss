@@ -5,3 +5,12 @@ export function variants(variants: Variants): string {
     .map(([key, value]) => `$${key}:${value};`)
     .join("");
 }
+
+export type Config = {
+  packageName?: string | undefined;
+  inject?: string | undefined;
+};
+
+export function defineConfig(config?: Config) {
+  return config;
+}

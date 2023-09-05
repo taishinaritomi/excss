@@ -44,17 +44,17 @@ function plugin(nextConfig: NextConfig, excssConfig: ExcssConfig) {
             isDevelopment: dev,
             future: (resolvedNextConfig["future"] as unknown) || {},
             experimental: resolvedNextConfig.experimental,
-            hasAppDir: resolvedNextConfig.experimental.appDir,
+            hasAppDir: true,
           } as ConfigurationContext,
           () => lazyPostCSS(dir, undefined, undefined),
           [],
         ),
       });
 
-      const isAppDir = resolvedNextConfig.experimental.appDir ?? true;
+      // const isAppDir = true;
 
       const excssWebpackPluginOption: ExcssOption = {
-        cssOutDir: isAppDir ? "./.next/cache/excss" : undefined,
+        cssOutDir: "./.next/cache/excss",
         inject: excssConfig.inject,
       };
 
