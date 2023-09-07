@@ -99,7 +99,7 @@
     "@excss/compiler": "workspace:*"
   },
   "devDependencies": {
-    "next": "^13.4.10",
+    "next": "^13.4.19",
     "vite": "^4.4.4",
     "webpack": "^5.88.1"
   },
