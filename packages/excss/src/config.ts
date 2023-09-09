@@ -19,14 +19,17 @@ export type Config = {
   inject?: string | undefined;
   /**
    * @default /\.(js|jsx|ts|tsx)$/
+   * @description Specifies a RegExp pattern or list of RegExp patterns to match files to be included in the compilation.
    */
   include?: FilterPattern | undefined;
   /**
    * @default undefined
+   * @description Specifies a RegExp pattern or list of RegExp patterns to identify files to be excluded from the compilation."
+   *
    */
   exclude?: FilterPattern | undefined;
 };
 
 export function defineConfig(config?: Config) {
-  return config;
+  return config?.exclude;
 }
