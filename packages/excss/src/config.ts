@@ -10,7 +10,7 @@ export function variants(variants: Variants): string {
 
 export type Config = {
   packageName?: string | undefined;
-    /**
+  /**
    * @default undefined
    */
   inject?: string | undefined;

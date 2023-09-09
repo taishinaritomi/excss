@@ -5,7 +5,6 @@ import * as esbuild from "esbuild";
 import type { Config } from "../config.ts";
 import { CONFIG_FILES, DEFAULT_INCLUDE } from "../constants.ts";
 import { dynamicImport } from "./dynamicImport.ts";
-import { generateHash } from "./generateHash.ts";
 import { getIsESM } from "./getIsESM.ts";
 import { getPackageJson } from "./getPackageJson.ts";
 import { lookupFile } from "./lookupFile.ts";
@@ -17,55 +16,62 @@ export async function loadConfig(root: string) {
   let dependencies: string[] = [];
 
   if (filename) {
-    const isESM = getIsESM(filename);
+    try {
+      dependencies.push(filename);
+      const isESM = getIsESM(filename);
+      const result = await esbuild.build({
+        absWorkingDir: root,
+        entryPoints: [filename],
+        outfile: "excss.js",
+        write: false,
+        bundle: true,
+        packages: "external",
+        format: isESM ? "esm" : "cjs",
+        platform: "node",
+        sourcemap: "inline",
+        metafile: true,
+      });
 
-    const result = await esbuild.build({
-      absWorkingDir: root,
-      entryPoints: [filename],
-      outfile: "excss.js",
-      write: false,
-      bundle: true,
-      packages: "external",
-      format: isESM ? "esm" : "cjs",
-      platform: "node",
-      sourcemap: "inline",
-      metafile: true,
-    });
+      const code = result.outputFiles[0]?.text ?? "";
 
-    const code = result.outputFiles[0]?.text ?? "";
+      dependencies = Object.keys(result.metafile.inputs).map((input) => {
+        return path.resolve(root, input);
+      });
 
-    if (code) {
-      const hash = generateHash(code);
-      const { dir, name } = path.parse(filename);
-      const outputFilename = path.join(
-        dir,
-        `${name}.${hash}.${isESM ? "mjs" : "cjs"}`,
-      );
+      if (code) {
+        const { dir, name } = path.parse(filename);
+        const outputFilename = path.join(
+          dir,
+          `${name}.${Date.now()}.${isESM ? "mjs" : "cjs"}`,
+        );
 
-      try {
-        fs.writeFileSync(outputFilename, code);
+        try {
+          fs.writeFileSync(outputFilename, code);
+          const module = (await dynamicImport(
+            isESM ? url.pathToFileURL(outputFilename).href : outputFilename,
+            isESM,
+          )) as { default?: Config };
 
-        const module = (await dynamicImport(
-          isESM ? url.pathToFileURL(outputFilename).href : outputFilename,
-          isESM,
-        )) as { default?: Config };
-
-        if (module.default) config = module.default;
-        dependencies = Object.keys(result.metafile.inputs).map((input) => {
-          return path.resolve(root, input);
-        });
-      } finally {
-        fs.rmSync(outputFilename);
+          if (module.default) config = module.default;
+        } finally {
+          fs.rmSync(outputFilename);
+        }
       }
+    } catch {
+      /* empty */
     }
   }
 
-  if (config.packageName === undefined) {
-    const packageJson = getPackageJson(root);
-    if (packageJson) {
-      config.packageName = packageJson.data.name;
-      dependencies.push(packageJson.path);
+  try {
+    if (config.packageName === undefined) {
+      const packageJson = getPackageJson(root);
+      if (packageJson) {
+        config.packageName = packageJson.data.name;
+        dependencies.push(packageJson.path);
+      }
     }
+  } catch {
+    /* empty */
   }
 
   config.include ??= DEFAULT_INCLUDE;
@@ -75,4 +81,3 @@ export async function loadConfig(root: string) {
     dependencies,
   };
 }
-

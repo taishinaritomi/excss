@@ -2,14 +2,7 @@ import type { NextConfig } from "next";
 import type { Configuration } from "webpack";
 import ExcssPlugin from "./webpack/plugin.ts";
 
-type ExcssConfig = {
-  /**
-   * @default {}
-   */
-  inject?: string;
-};
-
-export default function createPlugin(excssConfig: ExcssConfig) {
+export default function createPlugin() {
   return (nextConfig: NextConfig): NextConfig => {
     return {
       ...nextConfig,
@@ -17,7 +10,6 @@ export default function createPlugin(excssConfig: ExcssConfig) {
         config.plugins?.push(
           new ExcssPlugin({
             cssOutDir: "./.next/cache/excss",
-            inject: excssConfig.inject,
           }),
         );
 

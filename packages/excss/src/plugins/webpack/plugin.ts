@@ -1,44 +1,73 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Compiler } from "webpack";
-import type { ExcssLoaderOption } from "./loader.ts";
+import type { Filter } from "../../utils/createFilter.ts";
+import { createFilter } from "../../utils/createFilter.ts";
+import { loadConfig } from "../../utils/loadConfig.ts";
+import type { LoaderOption } from "./loader.ts";
 
-export type ExcssOption = Omit<
-  ExcssLoaderOption,
-  "root" | "packageName" | "configDependencies"
->;
+type PluginOption = {
+  cssOutDir?: string;
+};
 
-type PackageJson = {
-  name?: string;
+export type Config = {
+  root: string;
+  cssOutDir?: string | undefined;
+  configDependencies: string[];
+  packageName: string;
+  filter: Filter;
+  inject?: string | undefined;
 };
 
 export default class Plugin {
-  loaderOption: ExcssLoaderOption;
-  packageJsonPath = path.join(process.cwd(), "package.json");
+  pluginOption: PluginOption;
+  config: Config | undefined;
 
-  constructor(option?: ExcssOption) {
-    this.loaderOption = {
-      ...option,
-      packageName: this.getPackageName(),
-      root: process.cwd(),
-      configDependencies: [this.packageJsonPath],
+  constructor(option?: PluginOption) {
+    this.pluginOption = option ?? {};
+  }
+
+  async loadConfig(root: string) {
+    const { config, dependencies } = await loadConfig(root);
+    this.config = {
+      root,
+      configDependencies: dependencies,
+      cssOutDir: this.pluginOption.cssOutDir,
+      packageName: config.packageName ?? "unknown",
+      inject: config.inject,
+      filter: createFilter(config.include, config.exclude),
     };
   }
 
-  getPackageName() {
-    const file = fs.readFileSync(this.packageJsonPath);
-    const packageJson = JSON.parse(file.toString()) as PackageJson;
-    return packageJson.name ?? "unknown";
+  loaderLoadConfig() {
+    if (this.config) return this.config;
+    throw new Error("panic");
   }
 
   apply(compiler: Compiler): void {
-    this.loaderOption.root = compiler.context;
+    let isInit = true;
+    compiler.hooks.beforeCompile.tapPromise(
+      "excss:beforeCompile",
+      async (_) => {
+        if (isInit) {
+          await this.loadConfig(compiler.context);
+          isInit = false;
+        }
+      },
+    );
 
-    compiler.hooks.watchRun.tap("excss:watchRun", (compilation) => {
-      if (compilation.modifiedFiles?.has(this.packageJsonPath)) {
-        this.loaderOption.packageName = this.getPackageName();
-      }
-    });
+    compiler.hooks.watchRun.tapPromise(
+      "excss:beforeCompile",
+      async (compilation) => {
+        const isLoadConfig = this.config?.configDependencies
+          .map((dependency) => {
+            return compilation.modifiedFiles?.has(dependency);
+          })
+          .includes(true);
+
+        if (isLoadConfig) {
+          await this.loadConfig(compiler.context);
+        }
+      },
+    );
 
     compiler.options.module.rules.push({
       test: /\.(tsx|ts|js|mjs|jsx)$/,
@@ -46,7 +75,9 @@ export default class Plugin {
       use: [
         {
           loader: "excss/webpack/loader",
-          options: this.loaderOption,
+          options: {
+            loadConfig: this.loaderLoadConfig.bind(this),
+          } satisfies LoaderOption,
         },
       ],
     });

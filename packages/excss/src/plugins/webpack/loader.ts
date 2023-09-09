@@ -4,48 +4,54 @@ import path from "node:path";
 import { transform } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
 import { generateFileId } from "../../utils/generateFileId.ts";
+import type { Config } from "./plugin.ts";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
 
 const virtualLoader = "excss/webpack/virtualLoader";
 const virtualCSS = "excss/assets/ex.css";
 
-export type ExcssLoaderOption = {
-  cssOutDir?: string | undefined;
-  root: string;
-  packageName: string;
-  inject?: string | undefined;
-  configDependencies: string[];
+export type LoaderOption = {
+  loadConfig: () => Config;
 };
 
 export default function excssLoader(
-  this: LoaderContext<ExcssLoaderOption>,
+  this: LoaderContext<LoaderOption>,
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
 ) {
   try {
-    const option = this.getOptions();
+    const config = this.getOptions().loadConfig();
+
+    if (!config.filter(this.resourcePath)) {
+      this.callback(undefined, code, map);
+
+      for (const dependency of config.configDependencies) {
+        this.addDependency(dependency);
+      }
+      return;
+    }
 
     const fileId = generateFileId({
-      root: option.root,
+      root: config.root,
       filename: this.resourcePath,
-      packageName: option.packageName,
+      packageName: config.packageName,
     });
 
     const result = transform(code, {
       filename: this.resourcePath,
       fileId,
-      inject: option.inject,
+      inject: config.inject,
     });
 
     if (result.type === "Ok") {
       if (result.css) {
         const importCode = createCSSImportCode(result.css, {
           context: this,
-          cssOutDir: option.cssOutDir,
+          cssOutDir: config.cssOutDir,
         });
 
-        for (const dependency of option.configDependencies) {
+        for (const dependency of config.configDependencies) {
           this.addDependency(dependency);
         }
 
@@ -54,6 +60,10 @@ export default function excssLoader(
         this.callback(undefined, code, map);
       }
     } else {
+      for (const dependency of config.configDependencies) {
+        this.addDependency(dependency);
+      }
+
       this.callback(
         new Error(result.errors.map((err) => err.message).join("\n")),
         code,
