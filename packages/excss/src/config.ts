@@ -9,6 +9,9 @@ export function variants(variants: Variants): string {
 }
 
 export type Config = {
+  /**
+   * @default `packge.json` name property
+   */
   packageName?: string | undefined;
   /**
    * @default undefined

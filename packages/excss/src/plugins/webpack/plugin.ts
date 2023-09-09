@@ -5,7 +5,10 @@ import { loadConfig } from "../../utils/loadConfig.ts";
 import type { LoaderOption } from "./loader.ts";
 
 type PluginOption = {
-  cssOutDir?: string;
+  /**
+   * @default undefined
+   */
+  cssOutDir?: string | undefined;
 };
 
 export type Config = {
