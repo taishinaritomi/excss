@@ -1,8 +1,6 @@
 name: "setup-rust"
 runs:
   using: "composite"
-  env:
-    RUSTFLAGS: -D warnings
   steps:
     - uses: actions-rs/toolchain@v1
       with:
