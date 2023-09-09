@@ -1,34 +1,19 @@
 import { transform } from "@excss/compiler";
 import type * as Vite from "vite";
-import * as vite from "vite";
 import type { Config } from "../config.ts";
+import type { Filter } from "../utils/createFilter.ts";
+import { createFilter } from "../utils/createFilter.ts";
 import { generateFileId } from "../utils/generateFileId.ts";
 import { loadConfig } from "../utils/loadConfig.ts";
-
-const DEFAULT_INCLUDE = /\.(js|jsx|ts|tsx)$/;
 
 const VIRTUAL_MODULE_ID = "virtual:ex.css";
 const RESOLVED_VIRTUAL_MODULE_ID = "\0" + VIRTUAL_MODULE_ID;
 
-type ExcssOption = {
-  /**
-   * @default /\.(js|jsx|ts|tsx)$/
-   */
-  include?: Vite.FilterPattern | undefined;
-  /**
-   * @default undefined
-   */
-  exclude?: Vite.FilterPattern | undefined;
-};
-
-function plugin(option?: ExcssOption): Vite.Plugin {
-  const filter = vite.createFilter(
-    option?.include ?? DEFAULT_INCLUDE,
-    option?.exclude,
-  );
-
+function plugin(): Vite.Plugin {
   let root: string;
   let config: Config;
+
+  let filter: Filter;
 
   return {
     name: "excss",
@@ -41,6 +26,8 @@ function plugin(option?: ExcssOption): Vite.Plugin {
       );
 
       config = _config;
+
+      filter = createFilter(config.include, config.exclude);
 
       for (const dependency of dependencies) {
         viteConfig.configFileDependencies.push(dependency);

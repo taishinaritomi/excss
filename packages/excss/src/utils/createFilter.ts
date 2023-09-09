@@ -1,68 +1,35 @@
-console.log("createFilter");
+import { win32, posix } from "node:path";
 
-// import { resolve, posix, isAbsolute } from "node:path";
+function ensureArray<T>(value: T | T[] | undefined): T[] {
+  if (Array.isArray(value)) return value;
+  return value === undefined ? [] : [value];
+}
 
-// export type FilterPattern =
-//   | readonly (string | RegExp)[]
-//   | string
-//   | RegExp
-//   | null
-//   | undefined;
+function normalizePath(filename: string) {
+  return filename.split(win32.sep).join(posix.sep);
+}
 
-// function getMatcherString(
-//   id: string,
-//   resolutionBase: string | false | null | undefined,
-// ) {
-//   if (resolutionBase === false || isAbsolute(id) || id.startsWith("**")) {
-//     return normalizePath(id);
-//   }
+export type FilterPattern = RegExp | RegExp[];
+export type Filter = (filename: string) => boolean;
 
-//   // resolve('') is valid and will default to process.cwd()
-//   const basePath = normalizePath(resolve(resolutionBase || ""))
-//     // escape all possible (posix + win) path characters that might interfere with regex
-//     .replaceAll(/[$()*+.?[\]^{|}-]/g, "\\$&");
-//   // Note that we use posix.join because:
-//   // 1. the basePath has been normalized to use /
-//   // 2. the incoming glob (id) matcher, also uses /
-//   // otherwise Node will force backslash (\) on windows
-//   return posix.join(basePath, normalizePath(id));
-// }
+export function createFilter(
+  include?: FilterPattern | undefined,
+  exclude?: FilterPattern | undefined,
+): Filter {
+  const includes = ensureArray(include);
+  const excludes = ensureArray(exclude);
 
-// const createFilter: CreateFilter = function createFilter(
-//   include?,
-//   exclude?,
-//   options?,
-// ) {
-//   const resolutionBase = options?.resolve;
+  return (filename: string): boolean => {
+    filename = normalizePath(filename);
 
-//   const getMatcher = (id: string | RegExp) =>
-//     id instanceof RegExp
-//       ? id
-//       : {
-//           test: (what: string) => {
-//             // this refactor is a tad overly verbose but makes for easy debugging
-//             const pattern = getMatcherString(id, resolutionBase);
-//             const fn = pm(pattern, { dot: true });
-//             const result = fn(what);
+    for (const matcher of excludes) {
+      if (matcher.test(filename)) return false;
+    }
 
-//             return result;
-//           },
-//         };
+    for (const matcher of includes) {
+      if (matcher.test(filename)) return true;
+    }
 
-//   const includeMatchers = ensureArray(include).map(getMatcher);
-//   const excludeMatchers = ensureArray(exclude).map(getMatcher);
-
-//   return function result(id: string): boolean {
-//     if (typeof id !== "string") return false;
-
-//     for (const matcher of excludeMatchers) {
-//       if (matcher.test(id)) return false;
-//     }
-
-//     for (const matcher of includeMatchers) {
-//       if (matcher.test(id)) return true;
-//     }
-
-//     return includeMatchers.length === 0;
-//   };
-// };
+    return includes.length === 0;
+  };
+}

@@ -8,3 +8,5 @@ export const CONFIG_FILES = [
   "excss.config.cjs",
   "excss.config.mjs",
 ];
+
+export const DEFAULT_INCLUDE = /\.(js|jsx|ts|tsx)$/;

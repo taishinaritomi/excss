@@ -3,7 +3,7 @@ import path from "node:path";
 import url from "node:url";
 import * as esbuild from "esbuild";
 import type { Config } from "../config.ts";
-import { CONFIG_FILES } from "../constants.ts";
+import { CONFIG_FILES, DEFAULT_INCLUDE } from "../constants.ts";
 import { dynamicImport } from "./dynamicImport.ts";
 import { generateHash } from "./generateHash.ts";
 import { getIsESM } from "./getIsESM.ts";
@@ -68,8 +68,11 @@ export async function loadConfig(root: string) {
     }
   }
 
+  config.include ??= DEFAULT_INCLUDE;
+
   return {
     config,
     dependencies,
   };
 }
+

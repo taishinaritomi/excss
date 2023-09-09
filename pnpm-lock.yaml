@@ -87,9 +87,6 @@ importers:
       esbuild:
         specifier: ^0.19.2
         version: 0.19.2
-      picomatch:
-        specifier: ^2.3.1
-        version: 2.3.1
     devDependencies:
       next:
         specifier: ^13.4.19
@@ -5892,6 +5889,7 @@ packages:
   /picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
+    dev: true
 
   /pidtree@0.3.1:
     resolution: {integrity: sha512-qQbW94hLHEqCg7nhby4yRC7G2+jYHY4Rguc2bjw7Uug4GIJuu1tvf2uHaZv5Q8zdt+WKJ6qK1FOI6amaWUo5FA==}
