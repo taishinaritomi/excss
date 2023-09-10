@@ -4,7 +4,7 @@ import path from "node:path";
 import { transform } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
 import { generateFileId } from "../../utils/generateFileId.ts";
-import type { Config } from "./plugin.ts";
+import type { ExcssWebpackConfig } from "./plugin.ts";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
 
@@ -12,7 +12,7 @@ const virtualLoader = "excss/webpack/virtualLoader";
 const virtualCSS = "excss/assets/ex.css";
 
 export type LoaderOption = {
-  loadConfig: () => Config;
+  config: () => ExcssWebpackConfig;
 };
 
 export default function excssLoader(
@@ -21,12 +21,12 @@ export default function excssLoader(
   map: WebpackLoaderParams[1],
 ) {
   try {
-    const config = this.getOptions().loadConfig();
+    const config = this.getOptions().config();
 
     if (!config.filter(this.resourcePath)) {
       this.callback(undefined, code, map);
 
-      for (const dependency of config.configDependencies) {
+      for (const dependency of config.dependencies) {
         this.addDependency(dependency);
       }
       return;
@@ -51,7 +51,7 @@ export default function excssLoader(
           cssOutDir: config.cssOutDir,
         });
 
-        for (const dependency of config.configDependencies) {
+        for (const dependency of config.dependencies) {
           this.addDependency(dependency);
         }
 
@@ -60,7 +60,7 @@ export default function excssLoader(
         this.callback(undefined, code, map);
       }
     } else {
-      for (const dependency of config.configDependencies) {
+      for (const dependency of config.dependencies) {
         this.addDependency(dependency);
       }
 

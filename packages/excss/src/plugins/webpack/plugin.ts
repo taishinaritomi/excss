@@ -1,6 +1,5 @@
 import type { Compiler } from "webpack";
-import type { Filter } from "../../utils/createFilter.ts";
-import { createFilter } from "../../utils/createFilter.ts";
+import type { ResolvedConfig } from "../../utils/loadConfig.ts";
 import { loadConfig } from "../../utils/loadConfig.ts";
 import type { LoaderOption } from "./loader.ts";
 
@@ -11,62 +10,48 @@ type PluginOption = {
   cssOutDir?: string | undefined;
 };
 
-export type Config = {
-  root: string;
+export type ExcssWebpackConfig = ResolvedConfig & {
   cssOutDir?: string | undefined;
-  configDependencies: string[];
-  packageName: string;
-  filter: Filter;
-  inject?: string | undefined;
 };
 
 export default class Plugin {
   pluginOption: PluginOption;
-  config: Config | undefined;
+  _config: ExcssWebpackConfig | undefined;
 
   constructor(option?: PluginOption) {
     this.pluginOption = option ?? {};
   }
 
   async loadConfig(root: string) {
-    const { config, dependencies } = await loadConfig(root);
-    this.config = {
-      root,
-      configDependencies: dependencies,
+    const config = await loadConfig(root);
+    this._config = {
       cssOutDir: this.pluginOption.cssOutDir,
-      packageName: config.packageName ?? "unknown",
-      inject: config.inject,
-      filter: createFilter(config.include, config.exclude),
+      ...config,
     };
   }
 
-  loaderLoadConfig() {
-    if (this.config) return this.config;
-    throw new Error("panic");
+  config() {
+    if (this._config) return this._config;
+    throw new Error("configuration not initialized or undefined.");
   }
 
   apply(compiler: Compiler): void {
-    let isInit = true;
-    compiler.hooks.beforeCompile.tapPromise(
-      "excss:beforeCompile",
-      async (_) => {
-        if (isInit) {
-          await this.loadConfig(compiler.context);
-          isInit = false;
-        }
-      },
-    );
+    compiler.hooks.run.tapPromise("excss:run", async (_) => {
+      await this.loadConfig(compiler.context);
+    });
 
     compiler.hooks.watchRun.tapPromise(
-      "excss:beforeCompile",
+      "excss:watchRun",
       async (compilation) => {
-        const isLoadConfig = this.config?.configDependencies
-          .map((dependency) => {
-            return compilation.modifiedFiles?.has(dependency);
-          })
-          .includes(true);
+        if (this._config) {
+          const isConfigChanged = this._config.dependencies
+            .map((dependency) => compilation.modifiedFiles?.has(dependency))
+            .includes(true);
 
-        if (isLoadConfig) {
+          if (isConfigChanged) {
+            await this.loadConfig(compiler.context);
+          }
+        } else {
           await this.loadConfig(compiler.context);
         }
       },
@@ -79,7 +64,7 @@ export default class Plugin {
         {
           loader: "excss/webpack/loader",
           options: {
-            loadConfig: this.loaderLoadConfig.bind(this),
+            config: this.config.bind(this),
           } satisfies LoaderOption,
         },
       ],

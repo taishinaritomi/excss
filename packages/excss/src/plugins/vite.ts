@@ -1,35 +1,22 @@
 import { transform } from "@excss/compiler";
 import type * as Vite from "vite";
-import type { Config } from "../config.ts";
-import type { Filter } from "../utils/createFilter.ts";
-import { createFilter } from "../utils/createFilter.ts";
 import { generateFileId } from "../utils/generateFileId.ts";
+import type { ResolvedConfig } from "../utils/loadConfig.ts";
 import { loadConfig } from "../utils/loadConfig.ts";
 
 const VIRTUAL_MODULE_ID = "virtual:ex.css";
 const RESOLVED_VIRTUAL_MODULE_ID = "\0" + VIRTUAL_MODULE_ID;
 
 function plugin(): Vite.Plugin {
-  let root: string;
-  let config: Config;
-
-  let filter: Filter;
+  let config: ResolvedConfig;
 
   return {
     name: "excss",
 
     async configResolved(viteConfig) {
-      root = viteConfig.root;
+      config = await loadConfig(viteConfig.root);
 
-      const { config: _config, dependencies } = await loadConfig(
-        viteConfig.root,
-      );
-
-      config = _config;
-
-      filter = createFilter(config.include, config.exclude);
-
-      for (const dependency of dependencies) {
+      for (const dependency of config.dependencies) {
         viteConfig.configFileDependencies.push(dependency);
       }
     },
@@ -58,12 +45,12 @@ function plugin(): Vite.Plugin {
 
       if (!filename) return;
       if (filename.includes("/node_modules/")) return;
-      if (!filter(filename)) return;
+      if (!config.filter(filename)) return;
 
       const fileId = generateFileId({
-        root,
+        root: config.root,
         filename,
-        packageName: config.packageName ?? "unknown",
+        packageName: config.packageName,
       });
 
       const result = transform(code, {

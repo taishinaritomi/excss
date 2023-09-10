@@ -7,17 +7,17 @@ type PackageJson = {
   type?: "module" | "commonjs";
 };
 
-type Output = {
-  path: string;
-  data: PackageJson;
+type Result = {
+  filename: string;
+  packageJson: PackageJson;
 };
 
-export function getPackageJson(dir: string): Output | undefined {
+export function getPackageJson(dir: string): Result | undefined {
   const filename = lookupFile(dir, [PACKAGE_JSON]);
   return filename
     ? {
-        path: filename,
-        data: JSON.parse(
+        filename,
+        packageJson: JSON.parse(
           fs.readFileSync(filename, "utf8").toString(),
         ) as PackageJson,
       }

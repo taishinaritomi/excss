@@ -4,20 +4,31 @@ import url from "node:url";
 import * as esbuild from "esbuild";
 import type { Config } from "../config.ts";
 import { CONFIG_FILES, DEFAULT_INCLUDE } from "../constants.ts";
+import { createFilter, type Filter } from "./createFilter.ts";
 import { dynamicImport } from "./dynamicImport.ts";
 import { getIsESM } from "./getIsESM.ts";
 import { getPackageJson } from "./getPackageJson.ts";
 import { lookupFile } from "./lookupFile.ts";
 
-export async function loadConfig(root: string) {
+export type ResolvedConfig = {
+  root: string;
+  packageName: string;
+  filter: Filter;
+  inject?: string | undefined;
+  dependencies: string[];
+};
+
+export async function loadConfig(root: string): Promise<ResolvedConfig> {
   const filename = lookupFile(root, CONFIG_FILES);
 
-  let config: Config = {};
+  let config: Config | undefined;
+
   let dependencies: string[] = [];
 
   if (filename) {
     try {
       dependencies.push(filename);
+
       const isESM = getIsESM(filename);
       const result = await esbuild.build({
         absWorkingDir: root,
@@ -62,22 +73,25 @@ export async function loadConfig(root: string) {
     }
   }
 
+  let packageName = config?.packageName ?? "unknown";
+
   try {
-    if (config.packageName === undefined) {
-      const packageJson = getPackageJson(root);
-      if (packageJson) {
-        config.packageName = packageJson.data.name;
-        dependencies.push(packageJson.path);
+    if (config && config.packageName === undefined) {
+      const result = getPackageJson(root);
+      if (result?.packageJson.name) {
+        packageName = result.packageJson.name;
+        dependencies.push(result.filename);
       }
     }
   } catch {
     /* empty */
   }
 
-  config.include ??= DEFAULT_INCLUDE;
-
   return {
-    config,
+    root,
+    packageName,
+    filter: createFilter(config?.include ?? DEFAULT_INCLUDE, config?.exclude),
+    inject: config?.inject,
     dependencies,
   };
 }

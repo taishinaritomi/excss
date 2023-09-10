@@ -7,9 +7,9 @@ export function getIsESM(filename: string) {
   if (/^\.m[jt]s$/.test(ext)) return true;
   else if (/^\.c[jt]s$/.test(ext)) return false;
 
-  const packageJson = getPackageJson(dir);
+  const result = getPackageJson(dir);
 
-  if (packageJson?.data.type === "module") return true;
+  if (result?.packageJson.type === "module") return true;
 
   return false;
 }
