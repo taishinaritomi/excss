@@ -1,8 +1,9 @@
 {
   "extends": "../../types/tsconfig.base.json",
   "compilerOptions": {
+    "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "esModuleInterop": false,
     "useDefineForClassFields": true,
     "allowSyntheticDefaultImports": true,

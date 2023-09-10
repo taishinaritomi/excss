@@ -1,11 +1,11 @@
 {
   "extends": "../../types/tsconfig.base.json",
   "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "target": "ES2018",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
     "jsx": "preserve",
     "noEmit": true,
     "isolatedModules": true,
