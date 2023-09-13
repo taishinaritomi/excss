@@ -7,11 +7,7 @@ export default function createPlugin() {
     return {
       ...nextConfig,
       webpack(config: Configuration, options) {
-        config.plugins?.push(
-          new ExcssPlugin({
-            cssOutDir: "./.next/cache/excss",
-          }),
-        );
+        config.plugins?.push(new ExcssPlugin());
 
         if (typeof nextConfig.webpack === "function") {
           return nextConfig.webpack(config, options) as unknown;
