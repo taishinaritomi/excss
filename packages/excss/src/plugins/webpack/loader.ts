@@ -1,15 +1,10 @@
-import { createRequire } from "node:module";
 import { transform } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
 import { generateFileId } from "../../utils/generateFileId.ts";
 import type { ResolvedConfig } from "../../utils/loadConfig.ts";
+import { CSS_PATH } from "./plugin.ts";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
-
-declare const require: NodeRequire;
-const _require = __ESM__ ? createRequire(import.meta.url) : require;
-
-const VIRTUAL_CSS = "excss/assets/ex.css";
 export const CSS_PARAM_NAME = "css";
 
 export type LoaderOption = {
@@ -55,7 +50,7 @@ export default function excssLoader(
         const importCSS = `import ${JSON.stringify(
           `${this.utils.contextify(
             this.context,
-            _require.resolve(VIRTUAL_CSS),
+            CSS_PATH,
           )}?${params.toString()}`,
         )};`;
 

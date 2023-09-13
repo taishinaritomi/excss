@@ -1,7 +1,13 @@
+import { createRequire } from "node:module";
 import type { Compiler } from "webpack";
 import type { ResolvedConfig } from "../../utils/loadConfig.ts";
 import { loadConfig } from "../../utils/loadConfig.ts";
 import type { LoaderOption } from "./loader.ts";
+
+declare const require: NodeRequire;
+const _require = __ESM__ ? createRequire(import.meta.url) : require;
+
+export const CSS_PATH = _require.resolve("excss/assets/ex.css");
 
 export default class Plugin {
   _config: ResolvedConfig | undefined;
@@ -54,8 +60,7 @@ export default class Plugin {
         ],
       },
       {
-        test: /ex\.css$/,
-        exclude: /node_modules/,
+        test: CSS_PATH,
         use: [
           {
             loader: "excss/webpack/cssLoader",
