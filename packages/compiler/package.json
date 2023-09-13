@@ -36,6 +36,6 @@
     "build:web": "run-s build:web:*",
     "build:web:wasm-pack": "wasm-pack build --target=web --no-pack --out-dir=../../binding/wasm-web --out-name=excss_compiler ./crates/compiler_wasm",
     "build:web:package-json": "echo '{\"type\":\"module\"}' >> binding/wasm-web/package.json",
-    "build:clean": "rimraf binding/**/.gitignore"
+    "build:clean": "rimraf --glob binding/**/.gitignore"
   }
 }

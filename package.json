@@ -27,7 +27,7 @@
     "fix:cargo": "cargo fix --allow-no-vcs",
     "fix:cargo-clippy": "cargo clippy --fix --allow-no-vcs",
     "fix:cargo-fmt": "cargo fmt",
-    "clean": "rimraf ./node_modules target target_check ./{packages,playground}/*/{node_modules,dist,.next,.turbo}"
+    "clean": "rimraf --glob ./node_modules target target_check ./{packages,playground}/*/{node_modules,dist,.next,.turbo}"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
