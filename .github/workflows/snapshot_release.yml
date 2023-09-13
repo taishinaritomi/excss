@@ -4,10 +4,9 @@ on:
 jobs:
   snapshot_release:
     runs-on: ubuntu-latest
-    if: >-
-      github.event.issue.pull_request
+    if: ${{ github.event.issue.pull_request }}
     steps:
-      - id: "get-branch"
+      - id: 'get-branch'
         run: echo ::set-output name=branch::$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
         env:
           REPO: ${{ github.repository }}
@@ -29,6 +28,8 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> "$HOME/.npmrc"
           pnpm changeset version --snapshot snapshot
           pnpm changeset publish --snapshot --no-git-tag --tag snapshot
-      # &&
-      # github.event.comment.body == ':snapshot_release' &&
-      # github.event.comment.author_association == 'OWNER'
+
+          # github.event.issue.pull_request &&
+          # github.event.comment.body == ':snapshot_release' &&
+          # github.event.comment.author_association == 'OWNER'
+
