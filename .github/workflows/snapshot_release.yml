@@ -1,6 +1,7 @@
 name: snapshot release
 on:
   issue_comment:
+    types: [created]
 jobs:
   snapshot_release:
     runs-on: ubuntu-latest
@@ -23,11 +24,29 @@ jobs:
       - run: pnpm run build
       - run: pnpm run check
       - run: pnpm run test
-      - name: changeset snapshot
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> "$HOME/.npmrc"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> "$HOME/.npmrc"
+      - run: |
           pnpm changeset version --snapshot snapshot
           pnpm changeset publish --snapshot --no-git-tag --tag snapshot
+        id: changeset_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/github-script@v6
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: |
+            :snapshot_release
+            ```bash
+            ${{ steps.changeset_release.outputs.body }}
+            ```
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              comment_id: process.env.COMMENT_ID,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: process.env.COMMENT_BODY
+            })
