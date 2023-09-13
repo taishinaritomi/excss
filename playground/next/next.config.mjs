@@ -1,19 +1,11 @@
 import createBundleAnalyzer from "@next/bundle-analyzer";
-import { variants } from "excss/config";
 import createExcss from "excss/next";
 
 const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env["ANALYZE"] === "true",
 });
 
-const withExcss = createExcss({
-  inject: `
-    ${variants({
-      primary: "green",
-      sm: '"max-width: 300px"',
-    })}
-  `,
-});
+const withExcss = createExcss();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

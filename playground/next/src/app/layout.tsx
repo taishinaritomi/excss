@@ -1,3 +1,4 @@
+import { css } from "excss";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -10,7 +11,13 @@ function Layout({ children }: Props) {
       <head>
         <title></title>
       </head>
-      <body>{children}</body>
+      <body
+        className={css`
+          background: green;
+        `}
+      >
+        {children}
+      </body>
     </html>
   );
 }

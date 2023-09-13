@@ -96,7 +96,8 @@
     "build": "tsx ./scripts/build.ts"
   },
   "dependencies": {
-    "@excss/compiler": "workspace:*"
+    "@excss/compiler": "workspace:*",
+    "esbuild": "^0.19.2"
   },
   "devDependencies": {
     "next": "^13.4.19",

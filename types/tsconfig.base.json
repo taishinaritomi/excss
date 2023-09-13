@@ -2,7 +2,7 @@
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "nodenext",
     "noEmit": true,
     "moduleResolution": "nodenext",
     "allowImportingTsExtensions": true,

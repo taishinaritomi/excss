@@ -1,50 +1,24 @@
-import fs from "node:fs";
-import path from "node:path";
 import { transform } from "@excss/compiler";
 import type * as Vite from "vite";
-import * as vite from "vite";
 import { generateFileId } from "../utils/generateFileId.ts";
-
-const DEFAULT_INCLUDE = /\.(js|jsx|ts|tsx)$/;
+import type { ResolvedConfig } from "../utils/loadConfig.ts";
+import { loadConfig } from "../utils/loadConfig.ts";
 
 const VIRTUAL_MODULE_ID = "virtual:ex.css";
 const RESOLVED_VIRTUAL_MODULE_ID = "\0" + VIRTUAL_MODULE_ID;
 
-type ExcssOption = {
-  /**
-   * @default /\.(js|jsx|ts|tsx)$/
-   */
-  include?: Vite.FilterPattern | undefined;
-  /**
-   * @default undefined
-   */
-  exclude?: Vite.FilterPattern | undefined;
-  /**
-   * @default undefined
-   */
-  inject?: string | undefined;
-};
-
-function plugin(option?: ExcssOption): Vite.Plugin {
-  const filter = vite.createFilter(
-    option?.include ?? DEFAULT_INCLUDE,
-    option?.exclude,
-  );
-
-  let root: string;
-  let packageName: string;
+function plugin(): Vite.Plugin {
+  let config: ResolvedConfig;
 
   return {
     name: "excss",
 
-    configResolved(viteConfig) {
-      root = viteConfig.root;
-      const packageJson = JSON.parse(
-        fs.readFileSync(path.join(root, "package.json")).toString(),
-      ) as { name?: string };
+    async configResolved(viteConfig) {
+      config = await loadConfig(viteConfig.root);
 
-      viteConfig.configFileDependencies.push("package.json");
-      packageName = packageJson.name ?? "unknown";
+      for (const dependency of config.dependencies) {
+        viteConfig.configFileDependencies.push(dependency);
+      }
     },
 
     resolveId(id) {
@@ -71,14 +45,18 @@ function plugin(option?: ExcssOption): Vite.Plugin {
 
       if (!filename) return;
       if (filename.includes("/node_modules/")) return;
-      if (!filter(filename)) return;
+      if (!config.filter(filename)) return;
 
-      const fileId = generateFileId({ root, filename, packageName });
+      const fileId = generateFileId({
+        root: config.root,
+        filename,
+        packageName: config.packageName,
+      });
 
       const result = transform(code, {
         filename,
         fileId,
-        inject: option?.inject,
+        inject: config.inject,
       });
 
       if (result.type === "Ok") {
