@@ -54,8 +54,6 @@ export default function excssLoader(
           )}?${params.toString()}`,
         )};`;
 
-        console.log("debug", { importCSS });
-
         this.callback(undefined, `${result.code}\n${importCSS}`);
       } else {
         this.callback(undefined, code, map);
