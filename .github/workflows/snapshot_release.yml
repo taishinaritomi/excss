@@ -1,6 +1,7 @@
 name: snapshot release
 on:
   issue_comment:
+    types: [created]
 jobs:
   snapshot_release:
     runs-on: ubuntu-latest
