@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { Compiler } from "webpack";
 import type { ResolvedConfig } from "../../utils/loadConfig.ts";
 import { loadConfig } from "../../utils/loadConfig.ts";
@@ -25,7 +26,9 @@ export default class Plugin {
   async loadConfig(root: string) {
     const config = await loadConfig(root);
     this._config = {
-      cssOutDir: this.pluginOption.cssOutDir,
+      cssOutDir:
+        this.pluginOption.cssOutDir &&
+        path.resolve(root, this.pluginOption.cssOutDir),
       ...config,
     };
   }

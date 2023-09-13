@@ -46,14 +46,15 @@ export default function excssLoader(
 
     if (result.type === "Ok") {
       if (result.css) {
-        const importCode = createCSSImportCode(result.css, {
-          context: this,
-          cssOutDir: config.cssOutDir,
-        });
-
         for (const dependency of config.dependencies) {
           this.addDependency(dependency);
         }
+
+        const importCode = createCSSImportCode(result.css, {
+          context: this,
+          fileId,
+          cssOutDir: config.cssOutDir,
+        });
 
         this.callback(undefined, `${result.code}\n${importCode}`);
       } else {
@@ -77,25 +78,30 @@ export default function excssLoader(
 
 type CreateCSSImportCodeOption = {
   context: LoaderContext<unknown>;
+  fileId: string;
   cssOutDir?: string | undefined;
 };
 
 function createCSSImportCode(
   src: string,
-  { context, cssOutDir }: CreateCSSImportCodeOption,
+  { context, cssOutDir, fileId }: CreateCSSImportCodeOption,
 ) {
   if (cssOutDir) {
     if (!fs.existsSync(cssOutDir)) fs.mkdirSync(cssOutDir);
-    const hash = createHash("md5").update(src).digest("hex");
-    const srcPath = path.posix.join(cssOutDir, `${hash}.css`);
-    fs.writeFileSync(srcPath, src);
-    return `import "${srcPath}";`;
+    const hash = createHash("sha256").update(fileId).digest("hex").slice(0, 8);
+    const output = path.join(cssOutDir, `${hash}.css`);
+
+    fs.writeFileSync(output, src);
+
+    return `import ${JSON.stringify(
+      path.posix.relative(context.context, output) + "?" + Date.now(),
+    )};`;
   } else {
     const content = JSON.stringify({ src });
 
     return `import ${JSON.stringify(
       context.utils.contextify(
-        context.context || context.rootContext,
+        context.context,
         `ex.css!=!${virtualLoader}?${content}!${virtualCSS}`,
       ),
     )};`;
