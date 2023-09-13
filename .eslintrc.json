@@ -66,7 +66,7 @@
         "./packages/excss/src/compiler.ts",
         "./packages/excss/src/plugins/vite.ts",
         "./packages/excss/src/plugins/next.ts",
-        "./packages/excss/src/plugins/webpack/{virtualLoader,loader,plugin}.ts",
+        "./packages/excss/src/plugins/webpack/**",
         "./playground/next/src/app/**/{page,layout,loading,error,template,head}.tsx",
         "./playground/next/src/pages/**"
       ],
