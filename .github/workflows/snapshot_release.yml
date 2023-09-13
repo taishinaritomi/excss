@@ -1,0 +1,33 @@
+name: snapshot release
+on:
+  issue_comment:
+jobs:
+  snapshot_release:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.body == ':snapshot_release' &&
+      github.event.comment.author_association == 'OWNER'
+    steps:
+      - id: "get-branch"
+        run: echo ::set-output name=branch::$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
+        env:
+          REPO: ${{ github.repository }}
+          PR_NO: ${{ github.event.issue.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.get-branch.outputs.branch }}
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-rust
+      - run: pnpm run build
+      - run: pnpm run check
+      - run: pnpm run test
+      - name: changeset snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> "$HOME/.npmrc"
+          pnpm changeset version --snapshot snapshot
+          pnpm changeset publish --snapshot --no-git-tag --tag snapshot
