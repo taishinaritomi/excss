@@ -9,7 +9,8 @@ type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
 declare const require: NodeRequire;
 const _require = __ESM__ ? createRequire(import.meta.url) : require;
 
-const virtualCSS = "excss/assets/ex.css";
+const VIRTUAL_CSS = "excss/assets/ex.css";
+export const CSS_PARAM_NAME = "css";
 
 export type LoaderOption = {
   config: () => ResolvedConfig;
@@ -49,11 +50,16 @@ export default function excssLoader(
         for (const dependency of config.dependencies) {
           this.addDependency(dependency);
         }
-        const params = new URLSearchParams({ css: result.css });
+        const params = new URLSearchParams({ [CSS_PARAM_NAME]: result.css });
 
         const importCSS = `import ${JSON.stringify(
-          `${_require.resolve(virtualCSS)}?${params.toString()}`,
+          `${this.utils.contextify(
+            this.context,
+            _require.resolve(VIRTUAL_CSS),
+          )}?${params.toString()}`,
         )};`;
+
+        console.log("importCSS\n", importCSS);
 
         this.callback(undefined, `${result.code}\n${importCSS}`);
       } else {
