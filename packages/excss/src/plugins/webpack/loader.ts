@@ -59,7 +59,7 @@ export default function excssLoader(
           )}?${params.toString()}`,
         )};`;
 
-        console.log("importCSS\n", importCSS);
+        console.log("debug", { importCSS });
 
         this.callback(undefined, `${result.code}\n${importCSS}`);
       } else {
