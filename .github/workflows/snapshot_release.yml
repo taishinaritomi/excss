@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       github.event.issue.pull_request != '' &&
-      github.event.comment.body == 'release snapshot' &&
+      github.event.comment.body == ':snapshot_release' &&
       github.event.comment.author_association == 'OWNER'
     steps:
       - id: "get-branch"
