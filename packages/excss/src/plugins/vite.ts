@@ -64,10 +64,11 @@ function plugin(): Vite.Plugin {
           if (isSSR) {
             return { code: result.code, map: result.map };
           } else {
-            const fileParams = new URLSearchParams();
-            fileParams.append("css", result.css);
-            const virtualModule = `${VIRTUAL_MODULE_ID}?${fileParams.toString()}`;
-            const importCSS = `import "${virtualModule}";`;
+            const params = new URLSearchParams({ css: result.css });
+
+            const importCSS = `import ${JSON.stringify(
+              `${VIRTUAL_MODULE_ID}?${params.toString()}`,
+            )};`;
             return {
               code: `${result.code}\n${importCSS}`,
               map: result.map,
