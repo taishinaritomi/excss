@@ -28,10 +28,12 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: |
-          changeset_version=$(pnpm changeset version --snapshot snapshot)
-          changeset_publish=$(pnpm changeset publish --snapshot --no-git-tag --tag snapshot)
-          echo "changeset_version=$changeset_version" >> "$GITHUB_OUTPUT"
-          echo "changeset_publish=$changeset_publish" >> "$GITHUB_OUTPUT"
+          {
+            echo 'CHANGESET_RESPONSE<<EOF'
+            pnpm changeset version --snapshot snapshot
+            pnpm changeset publish --snapshot --no-git-tag --tag snapshot
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
         id: changeset_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,9 +44,7 @@ jobs:
           COMMENT_BODY: |
             :snapshot_release
             ```bash
-            ${{ steps.changeset_release.outputs.changeset_version }}
-
-            ${{ steps.changeset_release.outputs.changeset_publish }}
+            ${{ steps.changeset_release.outputs.CHANGESET_RESPONSE }}
             ```
         with:
           script: |
