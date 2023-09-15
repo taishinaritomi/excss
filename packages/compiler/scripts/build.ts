@@ -50,6 +50,11 @@ async function main() {
     JSON.stringify({ type: "module" }),
   );
 
+  await fs.appendFile(
+    "./binding/wasm-node/excss_compiler.js",
+    "globalThis.crypto ??= require('crypto').webcrypto;",
+  );
+
   await rimraf("./binding/**/.gitignore", { glob: true });
 }
 
