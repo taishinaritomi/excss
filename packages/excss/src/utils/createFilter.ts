@@ -1,12 +1,8 @@
-import { win32, posix } from "node:path";
+import { normalizePath } from "./normalizePath.ts";
 
 function ensureArray<T>(value: T | T[] | undefined): T[] {
   if (Array.isArray(value)) return value;
   return value === undefined ? [] : [value];
-}
-
-function normalizePath(filename: string) {
-  return filename.split(win32.sep).join(posix.sep);
 }
 
 export type FilterPattern = RegExp | RegExp[];

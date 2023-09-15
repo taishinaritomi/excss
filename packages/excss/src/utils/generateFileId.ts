@@ -1,4 +1,5 @@
 import path from "node:path";
+import { normalizePath } from "./normalizePath.ts";
 
 type Option = {
   root: string;
@@ -8,5 +9,5 @@ type Option = {
 
 export function generateFileId(option: Option) {
   const relativePath = path.relative(option.root, option.filename);
-  return `${option.packageName}+${relativePath}`;
+  return `${option.packageName}+${normalizePath(relativePath)}`;
 }
