@@ -55,7 +55,7 @@
       "import": "./dist/plugins/next.mjs",
       "require": "./dist/plugins/next.cjs"
     },
-    "./assets/ex.css": "./assets/ex.css"
+    "./assets/*": "./assets/*"
   },
   "typesVersions": {
     "*": {
