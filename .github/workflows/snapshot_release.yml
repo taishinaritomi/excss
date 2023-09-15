@@ -31,7 +31,7 @@ jobs:
           pnpm changeset version --snapshot snapshot &&
           pnpm changeset publish --snapshot --no-git-tag --tag snapshot
           )
-          echo "body=$OUTPUT" >> "$GITHUB_OUTPUT
+          echo "body=$OUTPUT" >> "$GITHUB_OUTPUT"
         id: changeset_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
