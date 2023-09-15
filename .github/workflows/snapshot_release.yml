@@ -27,11 +27,11 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> "$HOME/.npmrc"
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: OUTPUT=$(
-          pnpm changeset version --snapshot snapshot &&
-          pnpm changeset publish --snapshot --no-git-tag --tag snapshot
-          )
-          echo "body=$OUTPUT" >> "$GITHUB_OUTPUT"
+      - run: |
+          changeset_version=$(pnpm changeset version --snapshot snapshot)
+          changeset_publish=$(pnpm changeset publish --snapshot --no-git-tag --tag snapshot)
+          echo "changeset_version=$changeset_version" >> "$GITHUB_OUTPUT"
+          echo "changeset_publish=$changeset_publish" >> "$GITHUB_OUTPUT"
         id: changeset_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,9 @@ jobs:
           COMMENT_BODY: |
             :snapshot_release
             ```bash
-            ${{ steps.changeset_release.outputs.body }}
+            ${{ steps.changeset_release.outputs.changeset_version }}
+
+            ${{ steps.changeset_release.outputs.changeset_publish }}
             ```
         with:
           script: |
