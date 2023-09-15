@@ -28,14 +28,6 @@
     "test": "run-p test:*",
     "test:vitest": "vitest run",
     "test:vitest-type": "vitest typecheck --run",
-    "build": "run-s build:node build:web build:clean",
-    "build:node": "run-s build:node:*",
-    "build:node:wasm-pack": "wasm-pack build --target=nodejs --no-pack --out-dir=../../binding/wasm-node --out-name=excss_compiler ./crates/compiler_wasm",
-    "build:node:shim": "echo \"globalThis.crypto ??= require('crypto').webcrypto;\" >> binding/wasm-node/excss_compiler.js",
-    "build:node:package-json": "echo '{\"type\":\"commonjs\"}' >> binding/wasm-node/package.json",
-    "build:web": "run-s build:web:*",
-    "build:web:wasm-pack": "wasm-pack build --target=web --no-pack --out-dir=../../binding/wasm-web --out-name=excss_compiler ./crates/compiler_wasm",
-    "build:web:package-json": "echo '{\"type\":\"module\"}' >> binding/wasm-web/package.json",
-    "build:clean": "rimraf --glob binding/**/.gitignore"
+    "build": "tsx ./scripts/build.ts"
   }
 }
