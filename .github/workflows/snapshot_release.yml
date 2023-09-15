@@ -30,8 +30,8 @@ jobs:
       - run: |
           changeset_version=$(pnpm changeset version --snapshot snapshot)
           changeset_publish=$(pnpm changeset publish --snapshot --no-git-tag --tag snapshot)
-          echo "changeset_version=$changeset_version" >> "$GITHUB_OUTPUT"
-          echo "changeset_publish=$changeset_publish" >> "$GITHUB_OUTPUT"
+          echo "changeset_version='$changeset_version'" >> "$GITHUB_OUTPUT"
+          echo "changeset_publish='$changeset_publish'" >> "$GITHUB_OUTPUT"
         id: changeset_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
