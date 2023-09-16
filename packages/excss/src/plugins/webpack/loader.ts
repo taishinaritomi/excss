@@ -19,6 +19,8 @@ export default function excssLoader(
   try {
     const config = this.getOptions().config();
 
+    console.log("debug:", "excssLoader", this.resourcePath);
+
     if (!config.filter(this.resourcePath)) {
       this.callback(undefined, code, map);
 
