@@ -65,11 +65,9 @@ export default function excssLoader(
 
       this.callback(
         new Error(result.errors.map((err) => err.message).join("\n")),
-        code,
-        map,
       );
     }
   } catch (error) {
-    this.callback(error as Error, code, map);
+    this.callback(error as Error);
   }
 }
