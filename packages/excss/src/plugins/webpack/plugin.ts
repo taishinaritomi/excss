@@ -9,6 +9,8 @@ const _require = __ESM__ ? createRequire(import.meta.url) : require;
 
 export const CSS_PATH = _require.resolve("excss/assets/ex.css");
 
+console.log("debug:", "CSS_PATH", CSS_PATH);
+
 export default class Plugin {
   _config: ResolvedConfig | undefined;
 
