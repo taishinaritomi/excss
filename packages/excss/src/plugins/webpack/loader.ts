@@ -11,7 +11,7 @@ export type LoaderOption = {
   config: () => ResolvedConfig;
 };
 
-export default function excssLoader(
+export default function loader(
   this: LoaderContext<LoaderOption>,
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
