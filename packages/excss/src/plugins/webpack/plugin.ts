@@ -1,33 +1,22 @@
+import { createRequire } from "node:module";
 import type { Compiler } from "webpack";
 import type { ResolvedConfig } from "../../utils/loadConfig.ts";
 import { loadConfig } from "../../utils/loadConfig.ts";
 import type { LoaderOption } from "./loader.ts";
 
-type PluginOption = {
-  /**
-   * @default undefined
-   */
-  cssOutDir?: string | undefined;
-};
+declare const require: NodeRequire;
+const _require = __ESM__ ? createRequire(import.meta.url) : require;
 
-export type ExcssWebpackConfig = ResolvedConfig & {
-  cssOutDir?: string | undefined;
-};
+export const CSS_PATH = _require.resolve("excss/assets/ex.css");
 
 export default class Plugin {
-  pluginOption: PluginOption;
-  _config: ExcssWebpackConfig | undefined;
+  _config: ResolvedConfig | undefined;
 
-  constructor(option?: PluginOption) {
-    this.pluginOption = option ?? {};
-  }
+  // constructor() {}
 
   async loadConfig(root: string) {
     const config = await loadConfig(root);
-    this._config = {
-      cssOutDir: this.pluginOption.cssOutDir,
-      ...config,
-    };
+    this._config = config;
   }
 
   config() {
@@ -57,17 +46,30 @@ export default class Plugin {
       },
     );
 
-    compiler.options.module.rules.push({
-      test: /\.(tsx|ts|js|mjs|jsx)$/,
-      exclude: /node_modules/,
-      use: [
-        {
-          loader: "excss/webpack/loader",
-          options: {
-            config: this.config.bind(this),
-          } satisfies LoaderOption,
-        },
-      ],
-    });
+    compiler.options.module.rules.push(
+      {
+        test: /\.(tsx|ts|js|mjs|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "excss/webpack/loader",
+            options: {
+              config: this.config.bind(this),
+            } satisfies LoaderOption,
+          },
+        ],
+      },
+      {
+        test: CSS_PATH,
+        use: [
+          {
+            loader: "excss/webpack/cssLoader",
+            options: {
+              config: this.config.bind(this),
+            } satisfies LoaderOption,
+          },
+        ],
+      },
+    );
   }
 }

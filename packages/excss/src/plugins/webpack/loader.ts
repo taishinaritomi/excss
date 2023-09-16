@@ -1,21 +1,17 @@
-import { createHash } from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
 import { transform } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
 import { generateFileId } from "../../utils/generateFileId.ts";
-import type { ExcssWebpackConfig } from "./plugin.ts";
+import type { ResolvedConfig } from "../../utils/loadConfig.ts";
+import { CSS_PATH } from "./plugin.ts";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
-
-const virtualLoader = "excss/webpack/virtualLoader";
-const virtualCSS = "excss/assets/ex.css";
+export const CSS_PARAM_NAME = "css";
 
 export type LoaderOption = {
-  config: () => ExcssWebpackConfig;
+  config: () => ResolvedConfig;
 };
 
-export default function excssLoader(
+export default function loader(
   this: LoaderContext<LoaderOption>,
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
@@ -46,16 +42,19 @@ export default function excssLoader(
 
     if (result.type === "Ok") {
       if (result.css) {
-        const importCode = createCSSImportCode(result.css, {
-          context: this,
-          cssOutDir: config.cssOutDir,
-        });
-
         for (const dependency of config.dependencies) {
           this.addDependency(dependency);
         }
+        const params = new URLSearchParams({ [CSS_PARAM_NAME]: result.css });
 
-        this.callback(undefined, `${result.code}\n${importCode}`);
+        const importCSS = `import ${JSON.stringify(
+          `${this.utils.contextify(
+            this.context,
+            CSS_PATH,
+          )}?${params.toString()}`,
+        )};`;
+
+        this.callback(undefined, `${result.code}\n${importCSS}`);
       } else {
         this.callback(undefined, code, map);
       }
@@ -66,38 +65,9 @@ export default function excssLoader(
 
       this.callback(
         new Error(result.errors.map((err) => err.message).join("\n")),
-        code,
-        map,
       );
     }
   } catch (error) {
-    this.callback(error as Error, code, map);
-  }
-}
-
-type CreateCSSImportCodeOption = {
-  context: LoaderContext<unknown>;
-  cssOutDir?: string | undefined;
-};
-
-function createCSSImportCode(
-  src: string,
-  { context, cssOutDir }: CreateCSSImportCodeOption,
-) {
-  if (cssOutDir) {
-    if (!fs.existsSync(cssOutDir)) fs.mkdirSync(cssOutDir);
-    const hash = createHash("md5").update(src).digest("hex");
-    const srcPath = path.posix.join(cssOutDir, `${hash}.css`);
-    fs.writeFileSync(srcPath, src);
-    return `import "${srcPath}";`;
-  } else {
-    const content = JSON.stringify({ src });
-
-    return `import ${JSON.stringify(
-      context.utils.contextify(
-        context.context || context.rootContext,
-        `ex.css!=!${virtualLoader}?${content}!${virtualCSS}`,
-      ),
-    )};`;
+    this.callback(error as Error);
   }
 }

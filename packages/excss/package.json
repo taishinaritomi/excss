@@ -45,17 +45,17 @@
       "import": "./dist/plugins/webpack/loader.mjs",
       "require": "./dist/plugins/webpack/loader.cjs"
     },
-    "./webpack/virtualLoader": {
-      "types": "./dist/_types/plugins/webpack/virtualLoader.d.ts",
-      "import": "./dist/plugins/webpack/virtualLoader.mjs",
-      "require": "./dist/plugins/webpack/virtualLoader.cjs"
+    "./webpack/cssLoader": {
+      "types": "./dist/_types/plugins/webpack/cssLoader.d.ts",
+      "import": "./dist/plugins/webpack/cssLoader.mjs",
+      "require": "./dist/plugins/webpack/cssLoader.cjs"
     },
     "./next": {
       "types": "./dist/_types/plugins/next.d.ts",
       "import": "./dist/plugins/next.mjs",
       "require": "./dist/plugins/next.cjs"
     },
-    "./assets/ex.css": "./assets/ex.css"
+    "./assets/*": "./assets/*"
   },
   "typesVersions": {
     "*": {
@@ -74,8 +74,8 @@
       "webpack/loader": [
         "./dist/_types/plugins/webpack/loader"
       ],
-      "webpack/virtualLoader": [
-        "./dist/_types/plugins/webpack/virtualLoader"
+      "webpack/cssLoader": [
+        "./dist/_types/plugins/webpack/cssLoader"
       ],
       "next": [
         "./dist/_types/plugins/next"
@@ -84,6 +84,7 @@
   },
   "files": [
     "dist",
+    "assets",
     "LICENSE"
   ],
   "scripts": {

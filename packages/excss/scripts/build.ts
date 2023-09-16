@@ -22,7 +22,7 @@ const entryPoints = [
   "src/compiler.ts",
   "src/plugins/webpack/plugin.ts",
   "src/plugins/webpack/loader.ts",
-  "src/plugins/webpack/virtualLoader.ts",
+  "src/plugins/webpack/cssLoader.ts",
   "src/plugins/vite.ts",
   "src/plugins/next.ts",
 ];

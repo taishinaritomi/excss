@@ -14,7 +14,7 @@
     "test": "run-p test:*",
     "test:packages": "turbo run test --parallel",
     "test:cargo": "cargo test -- --nocapture",
-    "check": "CARGO_TARGET_DIR=target_check RUSTFLAGS=\"-D warnings\" run-p check:*",
+    "check": "cross-env CARGO_TARGET_DIR=target_check RUSTFLAGS=\"-D warnings\" run-p check:*",
     "check:packages": "turbo run check --parallel",
     "check:eslint": "eslint . --ignore-path .check-ignore --max-warnings 0",
     "check:prettier": "prettier . --check --ignore-path .check-ignore",
@@ -27,7 +27,7 @@
     "fix:cargo": "cargo fix --allow-no-vcs",
     "fix:cargo-clippy": "cargo clippy --fix --allow-no-vcs",
     "fix:cargo-fmt": "cargo fmt",
-    "clean": "./scripts/clean.sh"
+    "clean": "rimraf --glob ./node_modules target target_check ./{packages,playground}/*/{node_modules,dist,.next,.turbo}"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
@@ -37,6 +37,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "benny": "^3.7.1",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.18.11",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",

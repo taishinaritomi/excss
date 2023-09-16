@@ -28,6 +28,6 @@
     "test": "run-p test:*",
     "test:vitest": "vitest run",
     "test:vitest-type": "vitest typecheck --run",
-    "build": "./scripts/build.sh"
+    "build": "tsx ./scripts/build.ts"
   }
 }
