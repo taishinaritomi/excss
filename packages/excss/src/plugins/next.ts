@@ -8,6 +8,7 @@ export default function createPlugin() {
       ...nextConfig,
       webpack(config: Configuration, options) {
         config.plugins?.push(new ExcssPlugin());
+        config.infrastructureLogging = { level: "error" };
 
         if (typeof nextConfig.webpack === "function") {
           return nextConfig.webpack(config, options) as unknown;
