@@ -37,7 +37,7 @@ export default function loader(
     const result = transform(code, {
       filename: this.resourcePath,
       fileId,
-      helpers: config.helpers,
+      helper: config.helper,
     });
 
     if (result.type === "Ok") {

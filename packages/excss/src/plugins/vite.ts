@@ -57,7 +57,7 @@ function plugin(): Vite.Plugin {
       const result = transform(code, {
         filename,
         fileId,
-        helpers: config.helpers,
+        helper: config.helper,
       });
 
       if (result.type === "Ok") {

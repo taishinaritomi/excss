@@ -16,7 +16,7 @@ const DEFAULT_FILE_ID: &str = "unknown";
 pub struct Config {
     pub filename: String,
     pub file_id: Option<String>,
-    pub helpers: Option<String>,
+    pub helper: Option<String>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -38,12 +38,12 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
 
     let mut css = String::new();
 
-    let helpers_file_id = format!("${}:{};", &CSS_FILE_ID_VARIANT, &file_id);
+    let helper_file_id = format!("${}:{};", &CSS_FILE_ID_VARIANT, &file_id);
 
-    let helpers_css = format!(
+    let helper_css = format!(
         "{}\n{}",
-        &helpers_file_id,
-        config.helpers.unwrap_or(String::new())
+        &helper_file_id,
+        config.helper.unwrap_or(String::new())
     );
 
     let import_source = &IMPORT_SOURCE.to_string();
@@ -63,7 +63,7 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
             import_css_ident,
             import_file_id_ident,
             &file_id,
-            &helpers_css,
+            &helper_css,
         );
 
         module.visit_mut_with(&mut transform_visitor);
