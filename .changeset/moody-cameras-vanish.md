@@ -12,7 +12,7 @@ feat: integrated variants field into inject field
 - variants: {
 -   red: "#ff0000",
 - },
-  inject: `
+  helper: `
 +   ${variants({
 +     red: "#ff0000",
 +   })}
