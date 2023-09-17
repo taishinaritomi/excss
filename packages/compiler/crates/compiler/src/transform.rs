@@ -38,11 +38,11 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
 
     let mut css = String::new();
 
-    let helper_file_id = format!("${}:{};", &CSS_FILE_ID_VARIANT, &file_id);
+    let file_id_decl = format!("${}:{};", &CSS_FILE_ID_VARIANT, &file_id);
 
     let helper_css = format!(
         "{}\n{}",
-        &helper_file_id,
+        &file_id_decl,
         config.helper.unwrap_or(String::new())
     );
 
