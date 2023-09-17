@@ -1,7 +1,7 @@
 import { defineConfig, variants } from "excss/config";
 
 export default defineConfig({
-  inject: `
+  helpers: `
     ${variants({
       primary: "red",
       sm: '"max-width: 300px"',

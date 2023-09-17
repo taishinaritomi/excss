@@ -10,7 +10,7 @@ const TYPES: &'static str = r#"
 export type Config = {
     filename: string;
     fileId?: string | undefined;
-    inject?: string | undefined;
+    helpers?: string | undefined;
 }
 
 export type Result = {

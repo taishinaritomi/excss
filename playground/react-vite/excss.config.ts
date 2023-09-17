@@ -1,7 +1,7 @@
 import { defineConfig, variants } from "excss/config";
 
 export default defineConfig({
-  inject: `
+  helpers: `
     ${variants({
       red: "#ff0000",
     })}
