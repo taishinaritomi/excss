@@ -16,7 +16,7 @@ export type Config = {
   /**
    * @default undefined
    */
-  inject?: string | undefined;
+  helper?: string | undefined;
   /**
    * @default /\.(js|jsx|ts|tsx)$/
    * @description Specifies a RegExp pattern or list of RegExp patterns to match files to be included in the compilation.

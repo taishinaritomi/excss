@@ -19,7 +19,7 @@ pub struct TransformVisitor<'a> {
     import_css_ident: &'a String,
     import_file_id_ident: &'a String,
     css_list: HashSet<String>,
-    inject_css: &'a String,
+    helper_css: &'a String,
     file_id: &'a String,
     hash_count: usize,
 }
@@ -30,14 +30,14 @@ impl<'a> TransformVisitor<'a> {
         import_css_ident: &'a String,
         import_file_id_ident: &'a String,
         file_id: &'a String,
-        inject_css: &'a String,
+        helper_css: &'a String,
     ) -> Self {
         TransformVisitor {
             import_source,
             import_css_ident,
             import_file_id_ident,
             file_id,
-            inject_css,
+            helper_css,
             target_css_ident_ids: vec![],
             target_file_id_ident_ids: vec![],
             target_namespace_ids: vec![],
@@ -130,7 +130,7 @@ impl VisitMut for TransformVisitor<'_> {
                         let hash_salt = format!("{}+{}", &self.file_id, &self.hash_count);
                         self.hash_count += 1;
 
-                        match compile_css::compile(css, self.inject_css.clone(), hash_salt) {
+                        match compile_css::compile(css, self.helper_css.clone(), hash_salt) {
                             Ok(output) => {
                                 class_name = output.class_name;
                                 self.css_list.insert(output.css);

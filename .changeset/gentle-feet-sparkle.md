@@ -30,6 +30,6 @@ A new file `excss.config.ts` has been introduced to house the excess configurati
 +import { defineConfig } from "excss/config";
 +
 +export default defineConfig({
-+  inject: ``,
++  helper: ``,
 +});
 ```

@@ -13,7 +13,7 @@ describe("transform", () => {
 
     const result = transform(before, {
       filename: "index.ts",
-      inject: `
+      helper: `
         $red: red;
       `,
     });
@@ -95,7 +95,7 @@ describe("transform", () => {
 
     const result = transform(before, {
       filename: "index.ts",
-      inject: `
+      helper: `
         $blue: blue;
       `,
     });

@@ -51,11 +51,11 @@ pub struct Output {
 
 pub fn compile<T: Into<String>>(
     input: T,
-    inject: T,
+    helper: T,
     unique_salt: T,
 ) -> Result<Output, Box<dyn Error>> {
     let input = input.into();
-    let inject = inject.into();
+    let helper = helper.into();
     let unique_salt: String = unique_salt.into();
 
     let result = CONTEXT.set(&Context::new(unique_salt), || {
@@ -64,7 +64,7 @@ pub fn compile<T: Into<String>>(
             .add_custom_fn("unique", Builtin::new(unique));
 
         grass::from_string(
-            format!("{}\n.{} {{\n{}\n}}", &inject, CLASS_NAME_HASH, &input),
+            format!("{}\n.{} {{\n{}\n}}", &helper, CLASS_NAME_HASH, &input),
             &option,
         )
     });

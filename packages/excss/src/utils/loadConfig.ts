@@ -14,7 +14,7 @@ export type ResolvedConfig = {
   root: string;
   packageName: string;
   filter: Filter;
-  inject?: string | undefined;
+  helper?: string | undefined;
   dependencies: string[];
 };
 
@@ -91,7 +91,7 @@ export async function loadConfig(root: string): Promise<ResolvedConfig> {
     root,
     packageName,
     filter: createFilter(config?.include ?? DEFAULT_INCLUDE, config?.exclude),
-    inject: config?.inject,
+    helper: config?.helper,
     dependencies,
   };
 }
