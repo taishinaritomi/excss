@@ -84,9 +84,7 @@ Setting up the compiler based on the bundler.
 // next.config.mjs
 import createExcss from "excss/next";
 
-const withExcss = createExcss({
-  /* excss options */
-});
+const withExcss = createExcss();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {};
@@ -100,11 +98,7 @@ import Excss from "excss/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [
-    Excss({
-      /* excss options */
-    }),
-  ],
+  plugins: [Excss()],
 });
 ```
 
@@ -123,11 +117,22 @@ export default {
       },
     ],
   },
-  plugins: [
-    new ExcssPlugin({
-      /* excss options */
-    }),
-    new MiniCssExtractPlugin(),
-  ],
+  plugins: [new ExcssPlugin(), new MiniCssExtractPlugin()],
 };
+```
+
+## excss.config.ts
+
+```ts
+// excss.config.ts
+import { defineConfig, variants } from "excss/config";
+
+export default defineConfig({
+  include: /\.(ts|tsx)$/,
+  helper: `
+    ${variants({
+      primary: "red",
+    })}
+  `,
+});
 ```
