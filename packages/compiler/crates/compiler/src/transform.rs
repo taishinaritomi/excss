@@ -43,7 +43,7 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
     let inject_css = format!(
         "{}\n{}",
         &inject_file_id,
-        config.inject.unwrap_or(String::new())
+        config.inject.unwrap_or_default()
     );
 
     let import_source = &IMPORT_SOURCE.to_string();

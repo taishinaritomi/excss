@@ -16,6 +16,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@styled/typescript-styled-plugin": "^1.0.0",
+    "@excss/ts-plugin": "workspace:^",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react-swc": "^3.3.2",
