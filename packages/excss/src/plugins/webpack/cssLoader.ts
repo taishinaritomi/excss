@@ -1,10 +1,13 @@
 import type { LoaderContext } from "webpack";
-import { CSS_PARAM_NAME } from "./loader.ts";
+import type { LoaderOptions } from "./loader.ts";
 
-export default function cssLoader(this: LoaderContext<unknown>, src: string) {
+export default function cssLoader(
+  this: LoaderContext<LoaderOptions>,
+  src: string,
+) {
   try {
     const params = new URLSearchParams(this.resourceQuery);
-    const css = `${src}\n${params.get(CSS_PARAM_NAME) ?? ""}`;
+    const css = `${src}\n${params.get("css") ?? ""}`;
 
     this.callback(undefined, css);
   } catch (error) {
