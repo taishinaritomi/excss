@@ -1,27 +1,40 @@
+import fs from "node:fs";
 import { createRequire } from "node:module";
+import path from "node:path";
 import type { Compiler } from "webpack";
 import type { ResolvedConfig } from "../../utils/loadConfig.ts";
 import { loadConfig } from "../../utils/loadConfig.ts";
-import type { LoaderOption } from "./loader.ts";
+import type { LoaderOptions } from "./loader.ts";
 
 declare const require: NodeRequire;
 const _require = __ESM__ ? createRequire(import.meta.url) : require;
 
-export const CSS_PATH = _require.resolve("excss/assets/ex.css");
+export const CSS_PATH = (() => {
+  const cssPath = path.join(
+    // dist
+    path.dirname(_require.resolve("excss")),
+    "..",
+    "assets",
+    "ex.css",
+  );
+  if (!fs.existsSync(cssPath)) fs.writeFileSync(cssPath, "");
+  return cssPath;
+})();
 
 export default class Plugin {
-  _config: ResolvedConfig | undefined;
+  private config: ResolvedConfig | undefined;
+  watchMode = false;
 
   // constructor() {}
 
-  async loadConfig(root: string) {
-    const config = await loadConfig(root);
-    this._config = config;
+  getConfig() {
+    if (this.config) return this.config;
+    throw new Error("[excss internal error] config is not loaded");
   }
 
-  config() {
-    if (this._config) return this._config;
-    throw new Error("configuration not initialized or undefined.");
+  async loadConfig(root: string) {
+    const config = await loadConfig(root);
+    this.config = config;
   }
 
   apply(compiler: Compiler): void {
@@ -32,8 +45,9 @@ export default class Plugin {
     compiler.hooks.watchRun.tapPromise(
       "excss:watchRun",
       async (compilation) => {
-        if (this._config) {
-          const isConfigChanged = this._config.dependencies
+        this.watchMode = true;
+        if (this.config) {
+          const isConfigChanged = this.config.dependencies
             .map((dependency) => compilation.modifiedFiles?.has(dependency))
             .includes(true);
 
@@ -53,9 +67,7 @@ export default class Plugin {
         use: [
           {
             loader: "excss/webpack/loader",
-            options: {
-              config: this.config.bind(this),
-            } satisfies LoaderOption,
+            options: { plugin: this } satisfies LoaderOptions,
           },
         ],
       },
@@ -64,9 +76,7 @@ export default class Plugin {
         use: [
           {
             loader: "excss/webpack/cssLoader",
-            options: {
-              config: this.config.bind(this),
-            } satisfies LoaderOption,
+            options: { plugin: this } satisfies LoaderOptions,
           },
         ],
       },

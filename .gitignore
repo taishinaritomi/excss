@@ -8,4 +8,5 @@ target
 target_check
 .turbo
 .swc
+ex.css
 tsconfig.tsbuildinfo

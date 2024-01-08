@@ -1,23 +1,24 @@
+import fs from "node:fs";
 import { transform } from "@excss/compiler";
 import type { LoaderContext, LoaderDefinitionFunction } from "webpack";
 import { generateFileId } from "../../utils/generateFileId.ts";
-import type { ResolvedConfig } from "../../utils/loadConfig.ts";
+import type Plugin from "./plugin.ts";
 import { CSS_PATH } from "./plugin.ts";
 
 type WebpackLoaderParams = Parameters<LoaderDefinitionFunction<never>>;
-export const CSS_PARAM_NAME = "css";
 
-export type LoaderOption = {
-  config: () => ResolvedConfig;
+export type LoaderOptions = {
+  plugin: Plugin;
 };
 
 export default function loader(
-  this: LoaderContext<LoaderOption>,
+  this: LoaderContext<LoaderOptions>,
   code: WebpackLoaderParams[0],
   map: WebpackLoaderParams[1],
 ) {
   try {
-    const config = this.getOptions().config();
+    const { plugin } = this.getOptions();
+    const config = plugin.getConfig();
 
     if (!config.filter(this.resourcePath)) {
       this.callback(undefined, code, map);
@@ -45,7 +46,8 @@ export default function loader(
         for (const dependency of config.dependencies) {
           this.addDependency(dependency);
         }
-        const params = new URLSearchParams({ [CSS_PARAM_NAME]: result.css });
+
+        const params = new URLSearchParams({ css: result.css });
 
         const importCSS = `import ${JSON.stringify(
           `${this.utils.contextify(
@@ -53,6 +55,10 @@ export default function loader(
             CSS_PATH,
           )}?${params.toString()}`,
         )};`;
+
+        if (plugin.watchMode) {
+          fs.writeFileSync(CSS_PATH, `/* ${Date.now()} */`);
+        }
 
         this.callback(undefined, `${result.code}\n${importCSS}`);
       } else {

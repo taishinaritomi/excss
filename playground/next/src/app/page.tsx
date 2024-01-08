@@ -1,14 +1,6 @@
-import { css } from "excss";
+import { Button } from "./_components/Button";
 
 function Home() {
-  return (
-    <div
-      className={css`
-        color: $primary;
-      `}
-    >
-      app
-    </div>
-  );
+  return <Button />;
 }
 export default Home;
