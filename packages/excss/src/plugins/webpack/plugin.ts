@@ -10,15 +10,15 @@ declare const require: NodeRequire;
 const _require = __ESM__ ? createRequire(import.meta.url) : require;
 
 export const CSS_PATH = (() => {
-  const lastUpdate = path.join(
+  const cssPath = path.join(
     // dist
     path.dirname(_require.resolve("excss")),
     "..",
     "assets",
     "ex.css",
   );
-  if (!fs.existsSync(lastUpdate)) fs.writeFileSync(lastUpdate, "");
-  return lastUpdate;
+  if (!fs.existsSync(cssPath)) fs.writeFileSync(cssPath, "");
+  return cssPath;
 })();
 
 export default class Plugin {
