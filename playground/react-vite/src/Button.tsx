@@ -38,6 +38,7 @@ export function Button(props: Props) {
   const [isDisabled, toggle] = useReducer((v) => !v, false);
   return (
     <button
+      type="button"
       onClick={() => {
         toggle();
       }}

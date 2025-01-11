@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export function lookupFile(dir: string, files: string[]): string | undefined {
+export function lookupFile(_dir: string, files: string[]): string | undefined {
+  let dir = _dir;
   while (dir) {
     for (const file of files) {
       const filename = path.join(dir, file);

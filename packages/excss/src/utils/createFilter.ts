@@ -15,7 +15,8 @@ export function createFilter(
   const includes = ensureArray(include);
   const excludes = ensureArray(exclude);
 
-  return (filename: string): boolean => {
+  return (_filename: string): boolean => {
+    let filename = _filename;
     filename = normalizePath(filename);
 
     for (const matcher of excludes) {

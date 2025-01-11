@@ -4,7 +4,7 @@ import url from "node:url";
 import * as esbuild from "esbuild";
 import type { Config } from "../config.ts";
 import { CONFIG_FILES, DEFAULT_INCLUDE } from "../constants.ts";
-import { createFilter, type Filter } from "./createFilter.ts";
+import { type Filter, createFilter } from "./createFilter.ts";
 import { dynamicImport } from "./dynamicImport.ts";
 import { getIsESM } from "./getIsESM.ts";
 import { getPackageJson } from "./getPackageJson.ts";

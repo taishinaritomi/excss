@@ -40,11 +40,7 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
 
     let file_id_decl = format!("${}:{};", &CSS_FILE_ID_VARIANT, &file_id);
 
-    let helper_css = format!(
-        "{}\n{}",
-        &file_id_decl,
-        config.helper.unwrap_or(String::new())
-    );
+    let helper_css = format!("{}\n{}", &file_id_decl, config.helper.unwrap_or_default());
 
     let import_source = &IMPORT_SOURCE.to_string();
     let import_css_ident = &IMPORT_CSS_IDENT.to_string();

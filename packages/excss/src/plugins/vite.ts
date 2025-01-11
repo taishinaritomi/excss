@@ -5,7 +5,7 @@ import type { ResolvedConfig } from "../utils/loadConfig.ts";
 import { loadConfig } from "../utils/loadConfig.ts";
 
 const VIRTUAL_MODULE_ID = "virtual:ex.css";
-const RESOLVED_VIRTUAL_MODULE_ID = "\0" + VIRTUAL_MODULE_ID;
+const RESOLVED_VIRTUAL_MODULE_ID = `\0${VIRTUAL_MODULE_ID}`;
 const CSS_PARAM_NAME = "css";
 
 function plugin(): Vite.Plugin {
@@ -34,9 +34,9 @@ function plugin(): Vite.Plugin {
       if (filename === RESOLVED_VIRTUAL_MODULE_ID) {
         const params = new URLSearchParams(_params);
         return params.get(CSS_PARAM_NAME) ?? "";
-      } else {
-        return;
       }
+
+      return;
     },
 
     transform(code, id, options) {
@@ -64,25 +64,25 @@ function plugin(): Vite.Plugin {
         if (result.css) {
           if (isSSR) {
             return { code: result.code, map: result.map };
-          } else {
-            const params = new URLSearchParams({
-              [CSS_PARAM_NAME]: result.css,
-            });
-
-            const importCSS = `import ${JSON.stringify(
-              `${VIRTUAL_MODULE_ID}?${params.toString()}`,
-            )};`;
-            return {
-              code: `${result.code}\n${importCSS}`,
-              map: result.map,
-            };
           }
-        } else {
-          return;
+
+          const params = new URLSearchParams({
+            [CSS_PARAM_NAME]: result.css,
+          });
+
+          const importCSS = `import ${JSON.stringify(
+            `${VIRTUAL_MODULE_ID}?${params.toString()}`,
+          )};`;
+          return {
+            code: `${result.code}\n${importCSS}`,
+            map: result.map,
+          };
         }
-      } else {
-        throw new Error(result.errors.map((err) => err.message).join("\n"));
+
+        return;
       }
+
+      throw new Error(result.errors.map((err) => err.message).join("\n"));
     },
   };
 }

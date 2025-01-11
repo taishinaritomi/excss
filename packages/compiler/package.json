@@ -20,10 +20,7 @@
       "default": "./binding/wasm-node/excss_compiler.js"
     }
   },
-  "files": [
-    "binding",
-    "LICENSE"
-  ],
+  "files": ["binding", "LICENSE"],
   "scripts": {
     "test": "run-p test:*",
     "test:vitest": "vitest run",
