@@ -98,12 +98,12 @@
   },
   "dependencies": {
     "@excss/compiler": "workspace:*",
-    "esbuild": "^0.19.2"
+    "esbuild": "^0.24.2"
   },
   "devDependencies": {
-    "next": "^13.4.19",
-    "vite": "^4.4.4",
-    "webpack": "^5.88.1"
+    "next": "^15.1.4",
+    "vite": "^6.0.7",
+    "webpack": "^5.97.1"
   },
   "peerDependencies": {
     "next": "^13",
