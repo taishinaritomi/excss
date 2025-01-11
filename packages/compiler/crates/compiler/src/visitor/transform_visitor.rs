@@ -13,10 +13,12 @@ use crate::{compiler::compile_css, visitor::search_import_visitor::SearchImportV
 
 pub struct TransformVisitor<'a> {
     target_css_ident_ids: Vec<ast::Id>,
+    target_keyframes_ident_ids: Vec<ast::Id>,
     target_file_id_ident_ids: Vec<ast::Id>,
     target_namespace_ids: Vec<ast::Id>,
     import_source: &'a String,
     import_css_ident: &'a String,
+    import_keyframes_ident: &'a String,
     import_file_id_ident: &'a String,
     css_list: HashSet<String>,
     helper_css: &'a String,
@@ -28,6 +30,7 @@ impl<'a> TransformVisitor<'a> {
     pub fn new(
         import_source: &'a String,
         import_css_ident: &'a String,
+        import_keyframes_ident: &'a String,
         import_file_id_ident: &'a String,
         file_id: &'a String,
         helper_css: &'a String,
@@ -35,10 +38,12 @@ impl<'a> TransformVisitor<'a> {
         TransformVisitor {
             import_source,
             import_css_ident,
+            import_keyframes_ident,
             import_file_id_ident,
             file_id,
             helper_css,
             target_css_ident_ids: vec![],
+            target_keyframes_ident_ids: vec![],
             target_file_id_ident_ids: vec![],
             target_namespace_ids: vec![],
             css_list: HashSet::new(),
@@ -88,12 +93,21 @@ impl VisitMut for TransformVisitor<'_> {
 
             ast::Expr::TaggedTpl(tagged_tpl) => {
                 let mut is_target_css_ident = false;
+                let mut is_target_keyframes_ident = false;
                 match &*tagged_tpl.tag {
                     // fn``
                     ast::Expr::Ident(ident) => {
                         for target_id in self.target_css_ident_ids.iter() {
                             if ident.to_id() == *target_id {
                                 is_target_css_ident = true;
+                                break;
+                            }
+                        }
+
+                        for target_id in self.target_keyframes_ident_ids.iter() {
+                            if ident.to_id() == *target_id {
+                                is_target_keyframes_ident = true;
+                                break;
                             }
                         }
                     }
@@ -106,6 +120,8 @@ impl VisitMut for TransformVisitor<'_> {
                                         let ident_sym = ident.sym.to_string();
                                         if *self.import_css_ident == ident_sym {
                                             is_target_css_ident = true;
+                                        } else if *self.import_keyframes_ident == ident_sym {
+                                            is_target_keyframes_ident = true;
                                         }
                                     }
                                 }
@@ -146,6 +162,41 @@ impl VisitMut for TransformVisitor<'_> {
                         span: tagged_tpl.span,
                         value: class_name.into(),
                     }));
+                } else if is_target_keyframes_ident {
+                    let css = tagged_tpl
+                        .tpl
+                        .quasis
+                        .iter()
+                        .map(|quasi| quasi.raw.to_string())
+                        .collect::<Vec<_>>()
+                        .join("");
+
+                    let mut keyframes_name = "".to_string();
+
+                    if !css.is_empty() {
+                        let hash_salt = format!("{}+{}", &self.file_id, &self.hash_count);
+                        self.hash_count += 1;
+
+                        match compile_css::compile_keyframes(
+                            css,
+                            self.helper_css.clone(),
+                            hash_salt,
+                        ) {
+                            Ok(output) => {
+                                keyframes_name = output.keyframes_name;
+                                self.css_list.insert(output.css);
+                            }
+                            Err(err) => {
+                                errors::HANDLER.with(|h| h.err(&err.to_string()));
+                            }
+                        }
+                    }
+
+                    *expr = ast::Expr::Lit(ast::Lit::Str(ast::Str {
+                        raw: None,
+                        span: tagged_tpl.span,
+                        value: keyframes_name.into(),
+                    }));
                 }
             }
             _ => {}
@@ -157,12 +208,14 @@ impl VisitMut for TransformVisitor<'_> {
         let mut search_import_visitor = SearchImportVisitor::new(
             self.import_source,
             self.import_css_ident,
+            self.import_keyframes_ident,
             self.import_file_id_ident,
         );
 
         module.visit_mut_with(&mut search_import_visitor);
 
         self.target_css_ident_ids = search_import_visitor.target_css_ident_ids;
+        self.target_keyframes_ident_ids = search_import_visitor.target_keyframes_ident_ids;
         self.target_file_id_ident_ids = search_import_visitor.target_file_id_ident_ids;
         self.target_namespace_ids = search_import_visitor.target_namespace_ids;
 

@@ -61,8 +61,8 @@ describe("transform", () => {
     `;
 
     const css = `
-      .eJbwPJ{color:red;}
       .kfMYJO{color: blue;}
+      .eJbwPJ{color:red;}
       .cfIbqU{color: green;}
     `;
 

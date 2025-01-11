@@ -7,6 +7,7 @@ use super::{
 
 const IMPORT_SOURCE: &str = "excss";
 const IMPORT_CSS_IDENT: &str = "css";
+const IMOPORT_KEYFRAMES_IDENT: &str = "keyframes";
 const IMPORT_FILE_ID_IDENT: &str = "FILE_ID";
 const CSS_FILE_ID_VARIANT: &str = "FILE_ID";
 const DEFAULT_FILE_ID: &str = "unknown";
@@ -44,6 +45,7 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
 
     let import_source = &IMPORT_SOURCE.to_string();
     let import_css_ident = &IMPORT_CSS_IDENT.to_string();
+    let import_keyframes_ident = &IMOPORT_KEYFRAMES_IDENT.to_string();
     let import_file_id_ident = &IMPORT_FILE_ID_IDENT.to_string();
 
     let compile_input = compile_js::Input {
@@ -57,6 +59,7 @@ pub fn transform(code: String, config: Config) -> Result<Output, error::Error> {
         let mut transform_visitor = TransformVisitor::new(
             import_source,
             import_css_ident,
+            import_keyframes_ident,
             import_file_id_ident,
             &file_id,
             &helper_css,
