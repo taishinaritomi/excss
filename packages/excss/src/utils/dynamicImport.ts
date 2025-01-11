@@ -8,8 +8,8 @@ export async function dynamicImport(
 ): Promise<unknown> {
   if (isESM) {
     return (await import(file)) as unknown;
-  } else {
-    const _require = __ESM__ ? createRequire(import.meta.url) : require;
-    return _require(file) as unknown;
   }
+
+  const _require = __ESM__ ? createRequire(import.meta.url) : require;
+  return _require(file) as unknown;
 }

@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "excss": "workspace:^",
-    "solid-js": "^1.7.8"
+    "solid-js": "^1.9.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.0.3",
-    "vite": "^4.4.4",
-    "vite-plugin-inspect": "^0.7.33",
-    "vite-plugin-solid": "^2.7.0"
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.7",
+    "vite-plugin-inspect": "^10.0.6",
+    "vite-plugin-solid": "^2.11.0"
   }
 }

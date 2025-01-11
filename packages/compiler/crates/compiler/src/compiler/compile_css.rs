@@ -42,9 +42,10 @@ fn unique(_: ArgumentResult, _: &mut Visitor) -> Result<Value, Box<grass_compile
 }
 
 const CLASS_NAME_HASH: &str = "__EX_CSS_CLASS_NAME_HASH__";
+const KEYFRAMES_NAME_HASH: &str = "__EX_CSS_KEYFRAMES_NAME_HASH__";
 
 #[derive(PartialEq, Debug)]
-pub struct Output {
+pub struct CSSOutput {
     pub css: String,
     pub class_name: String,
 }
@@ -53,7 +54,7 @@ pub fn compile<T: Into<String>>(
     input: T,
     helper: T,
     unique_salt: T,
-) -> Result<Output, Box<dyn Error>> {
+) -> Result<CSSOutput, Box<dyn Error>> {
     let input = input.into();
     let helper = helper.into();
     let unique_salt: String = unique_salt.into();
@@ -73,9 +74,51 @@ pub fn compile<T: Into<String>>(
         Ok(css) => {
             let class_name = generate_hash(&css)?;
 
-            Ok(Output {
+            Ok(CSSOutput {
                 css: css.replace(CLASS_NAME_HASH, &class_name),
                 class_name,
+            })
+        }
+        Err(err) => Err(Box::new(handle_error(*err))),
+    }
+}
+
+#[derive(PartialEq, Debug)]
+pub struct KeyframesOutput {
+    pub css: String,
+    pub keyframes_name: String,
+}
+
+pub fn compile_keyframes<T: Into<String>>(
+    input: T,
+    helper: T,
+    unique_salt: T,
+) -> Result<KeyframesOutput, Box<dyn Error>> {
+    let input = input.into();
+    let helper = helper.into();
+    let unique_salt: String = unique_salt.into();
+
+    let result = CONTEXT.set(&Context::new(unique_salt), || {
+        let option = grass::Options::default()
+            .input_syntax(grass::InputSyntax::Scss)
+            .add_custom_fn("unique", Builtin::new(unique));
+
+        grass::from_string(
+            format!(
+                "{}\n@keyframes {} {{\n{}\n}}",
+                &helper, KEYFRAMES_NAME_HASH, &input
+            ),
+            &option,
+        )
+    });
+
+    match result {
+        Ok(css) => {
+            let keyframes_name = generate_hash(&css)?;
+
+            Ok(KeyframesOutput {
+                css: css.replace(KEYFRAMES_NAME_HASH, &keyframes_name),
+                keyframes_name,
             })
         }
         Err(err) => Err(Box::new(handle_error(*err))),
@@ -98,7 +141,9 @@ fn handle_error(err: grass::Error) -> io::Error {
 
 #[cfg(test)]
 mod tests {
-    use super::{compile, Output};
+    use crate::compiler::compile_css::compile_keyframes;
+
+    use super::{compile, CSSOutput, KeyframesOutput};
 
     #[test]
     fn base() {
@@ -106,9 +151,22 @@ mod tests {
         let output = compile(code, "", "").unwrap();
         assert_eq!(
             output,
-            Output {
+            CSSOutput {
                 css: ".eJbwPJ {\n  color: red;\n}\n".to_string(),
                 class_name: "eJbwPJ".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn keyframes() {
+        let code = "from { color: red; } to { color: blue; }";
+        let output = compile_keyframes(code, "", "").unwrap();
+        assert_eq!(
+            output,
+            KeyframesOutput {
+                css:  "@keyframes dmfCDo {\n  from {\n    color: red;\n  }\n  to {\n    color: blue;\n  }\n}\n".to_string(),
+                keyframes_name: "dmfCDo".to_string(),
             }
         );
     }

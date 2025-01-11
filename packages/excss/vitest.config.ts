@@ -1,10 +1,3 @@
-import { defineConfig } from "vitest/config";
+import { sharedConfig } from "../../vitest.workspace.ts";
 
-export default defineConfig({
-  test: {
-    typecheck: {
-      checker: "tsc",
-      include: ["src/**/*.spec.*"],
-    },
-  },
-});
+export default sharedConfig;

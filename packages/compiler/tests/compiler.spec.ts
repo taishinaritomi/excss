@@ -1,5 +1,5 @@
 import { format } from "prettier";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { transform } from "../binding/wasm-node/excss_compiler.js";
 
 describe("transform", () => {
@@ -27,7 +27,7 @@ describe("transform", () => {
       const className = "eJbwPJ";
     `;
 
-    const css = `.eJbwPJ{color:red;}`;
+    const css = ".eJbwPJ{color:red;}";
 
     expect(await format(result.code, { parser: "babel" })).equals(
       await format(after, { parser: "babel" }),
@@ -61,8 +61,8 @@ describe("transform", () => {
     `;
 
     const css = `
-      .eJbwPJ{color:red;}
       .kfMYJO{color: blue;}
+      .eJbwPJ{color:red;}
       .cfIbqU{color: green;}
     `;
 

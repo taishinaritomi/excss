@@ -3,6 +3,7 @@ import { css } from "excss";
 export function Button() {
   return (
     <button
+      type="button"
       class={css`
         border: none;
         padding: 0.5rem 1rem;

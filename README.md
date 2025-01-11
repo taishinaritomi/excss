@@ -1,9 +1,9 @@
 # excss
 
-excss is a small, simple, zero-runtime CSS-in-JS library with just two APIs.
+excss is a small, simple, zero-runtime CSS-in-JS library with just 3 APIs.
 
 ```ts
-import { css, ex, FILE_ID } from "excss";
+import { css, ex, keyframes, FILE_ID } from "excss";
 import type { Ex } from "excss";
 import { useState } from "react";
 
@@ -70,6 +70,27 @@ export function Component(props: Props) {
     </div>
   );
 }
+
+export function AnimationSpin() {
+  const spin = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  `;
+
+  const style = css`
+    div {
+      font-size: 50px;
+      animation-duration: 2s;
+    }
+  `;
+
+  return (
+    <div>
+      <div className={style} style={{ animationName: spin }} />
+    </div>
+  );
+}
+
 ```
 
 ## Setups

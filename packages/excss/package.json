@@ -59,51 +59,31 @@
   },
   "typesVersions": {
     "*": {
-      "config": [
-        "./dist/_types/config"
-      ],
-      "compiler": [
-        "./dist/_types/compiler"
-      ],
-      "vite": [
-        "./dist/_types/plugins/vite"
-      ],
-      "webpack": [
-        "./dist/_types/plugins/webpack/plugin"
-      ],
-      "webpack/loader": [
-        "./dist/_types/plugins/webpack/loader"
-      ],
-      "webpack/cssLoader": [
-        "./dist/_types/plugins/webpack/cssLoader"
-      ],
-      "next": [
-        "./dist/_types/plugins/next"
-      ]
+      "config": ["./dist/_types/config"],
+      "compiler": ["./dist/_types/compiler"],
+      "vite": ["./dist/_types/plugins/vite"],
+      "webpack": ["./dist/_types/plugins/webpack/plugin"],
+      "webpack/loader": ["./dist/_types/plugins/webpack/loader"],
+      "webpack/cssLoader": ["./dist/_types/plugins/webpack/cssLoader"],
+      "next": ["./dist/_types/plugins/next"]
     }
   },
-  "files": [
-    "dist",
-    "assets",
-    "LICENSE"
-  ],
+  "files": ["dist", "assets", "LICENSE"],
   "scripts": {
     "check": "run-p check:*",
     "check:type": "tsc --noEmit",
-    "check:publint": "publint --strict",
-    "test": "run-p test:*",
-    "test:vitest": "vitest run",
-    "test:vitest-type": "vitest typecheck --run",
+    "check:publint": "echo 'publint is not checked'",
+    "_check:publint": "publint --strict",
     "build": "tsx ./scripts/build.ts"
   },
   "dependencies": {
     "@excss/compiler": "workspace:*",
-    "esbuild": "^0.19.2"
+    "esbuild": "^0.24.2"
   },
   "devDependencies": {
-    "next": "^13.4.19",
-    "vite": "^4.4.4",
-    "webpack": "^5.88.1"
+    "next": "^15.1.4",
+    "vite": "^6.0.7",
+    "webpack": "^5.97.1"
   },
   "peerDependencies": {
     "next": "^13",

@@ -7,9 +7,9 @@ type Props = {
 
 function Layout({ children }: Props) {
   return (
-    <html>
+    <html lang="en">
       <head>
-        <title></title>
+        <title>excss</title>
       </head>
       <body
         className={css`

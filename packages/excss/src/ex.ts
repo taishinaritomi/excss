@@ -1,8 +1,8 @@
 import type {
   Pretty,
   ToLiteral,
-  Required as _Required,
   Optional as _Optional,
+  Required as _Required,
 } from "./utils/types.ts";
 
 const DEFAULT = "default";
@@ -93,7 +93,9 @@ function callback(this: { _input: RawInput }, props?: RawProps): string {
 function resolveClassName(className: Ex.ClassName): string {
   if (typeof className === "string") {
     return className;
-  } else if (Array.isArray(className)) {
+  }
+
+  if (Array.isArray(className)) {
     let result = "";
 
     for (const _className of className) {
@@ -104,9 +106,9 @@ function resolveClassName(className: Ex.ClassName): string {
     }
 
     return result;
-  } else {
-    return "";
   }
+
+  return "";
 }
 
 export type Ex<T extends RawCallback> = Pretty<
@@ -118,6 +120,4 @@ export function ex<T>(input: Input<T>) {
   return callback.bind(bind) as (props?: Props<T> | undefined) => string;
 }
 
-ex.join = function (...classNames: Ex.ClassName[]) {
-  return resolveClassName(classNames);
-};
+ex.join = (...classNames: Ex.ClassName[]) => resolveClassName(classNames);

@@ -1,4 +1,4 @@
-import { css, FILE_ID } from "excss";
+import { FILE_ID, css } from "excss";
 import { useState } from "react";
 import { Button } from "./Button";
 
@@ -16,6 +16,7 @@ export function App() {
       `}
     >
       <button
+        type="button"
         onClick={() => {
           setCount((v) => v + 1);
         }}
