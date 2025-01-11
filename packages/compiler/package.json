@@ -22,9 +22,6 @@
   },
   "files": ["binding", "LICENSE"],
   "scripts": {
-    "test": "run-p test:*",
-    "test:vitest": "vitest run",
-    "test:vitest-type": "vitest typecheck --run",
     "build": "tsx ./scripts/build.ts"
   }
 }

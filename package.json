@@ -10,7 +10,7 @@
     "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
     "test": "run-p test:*",
-    "test:packages": "turbo run test --parallel",
+    "test:packages": "vitest run",
     "test:cargo": "cargo test -- --nocapture",
     "check": "cross-env CARGO_TARGET_DIR=target_check RUSTFLAGS=\"-D warnings\" run-p check:*",
     "check:packages": "turbo run check --parallel",

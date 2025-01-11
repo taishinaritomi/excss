@@ -74,9 +74,6 @@
     "check:type": "tsc --noEmit",
     "check:publint": "echo 'publint is not checked'",
     "_check:publint": "publint --strict",
-    "test": "run-p test:*",
-    "test:vitest": "vitest run",
-    "test:vitest-type": "vitest typecheck --run",
     "build": "tsx ./scripts/build.ts"
   },
   "dependencies": {
