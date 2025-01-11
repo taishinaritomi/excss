@@ -2,6 +2,7 @@ import { describe, it } from "vitest";
 // import type { Ex } from "./ex.ts";
 // import { ex } from "./ex.ts";
 
+// TODO fix tests
 describe("ex", () => {
   it("basic", () => {
     // const style = ex({
