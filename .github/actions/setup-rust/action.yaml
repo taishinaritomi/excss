@@ -13,7 +13,7 @@ runs:
           target
           target_check
         key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
-    - run: rustup override set 1.70.0
+    - run: rustup override set 1.84.0
       shell: bash
     - run: rustup component add rustfmt clippy
       shell: bash
